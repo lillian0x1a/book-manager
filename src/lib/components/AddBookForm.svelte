@@ -52,31 +52,40 @@
 	};
 </script>
 
-<Card.Root class="max-w-md mx-auto mt-8">
-	<Card.Header>
-		<h2 class="text-lg font-bold">書籍追加フォーム</h2>
-	</Card.Header>
-	<Card.Content>
-		<form class="space-y-4" on:submit|preventDefault={handleSubmit}>
-			<div class="space-y-1">
-				<Label for="title">書籍タイトル</Label>
-				<Input id="title" type="text" bind:value={title} placeholder="タイトルを入力" required />
-			</div>
-			<div class="space-y-1">
-				<Label for="author">著者</Label>
-				<Input id="author" type="text" bind:value={author} placeholder="著者名を入力" required />
-			</div>
-			<div class="space-y-1">
-				<Label for="isbn">ISBN</Label>
-				<Input id="isbn" type="text" bind:value={isbn} placeholder="978-3-16-148410-0" />
-			</div>
-			<div class="space-y-1">
-				<Label for="publishedDate">出版日</Label>
-				<Input id="publishedDate" type="date" bind:value={publishedDate} />
-			</div>
-			<Card.Footer>
-				<Button type="submit" class="w-full">書籍を追加</Button>
-			</Card.Footer>
-		</form>
-	</Card.Content>
-</Card.Root>
+<form class="space-y-4" on:submit|preventDefault={handleSubmit}>
+	<div class="flex items-center space-x-2">
+		<input
+			bind:value={isbn}
+			placeholder="ISBN"
+			class="px-3 py-2 border rounded w-full"
+			on:change={searchByISBN}
+		/>
+		/>
+		<button
+			on:click|preventDefault={searchByISBN}
+			class="px-4 py-2 rounded text-white bg-gray-500 hover:bg-gray-600"
+			disabled={isLoading}
+		>
+			{#if isLoading}検索中...{:else}検索{/if}
+		</button>
+	</div>
+	{#if errorMessage}
+		<p class="text-red-500 text-sm">{errorMessage}</p>
+	{/if}
+	<input
+		bind:value={title}
+		placeholder="タイトル*"
+		class="px-3 py-2 border rounded w-full"
+		required
+	/>
+	<input bind:value={author} placeholder="著者*" class="px-3 py-2 border rounded w-full" required />
+	<input
+		type="date"
+		bind:value={publishedDate}
+		placeholder="出版日"
+		class="px-3 py-2 border rounded w-full"
+	/>
+	<button type="submit" class="px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-600 w-full"
+		>追加</button
+	>
+</form>
