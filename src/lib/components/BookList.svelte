@@ -45,13 +45,9 @@
 	/>
 </div>
 
-<div class="mb-4">
-	<label for="sortBy" class="mr-2">ソート:</label>
-	<select
-		id="sortBy"
-		class="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-		bind:value={sortBy}
-	>
+<div class="mb-4 flex items-center gap-2">
+	<span>ソート:</span>
+	<select class="border rounded px-3 py-2 dark:bg-gray-800 dark:text-white" bind:value={sortBy}>
 		<option value="title">タイトル</option>
 		<option value="author">著者</option>
 		<option value="publishedDate">出版日</option>
