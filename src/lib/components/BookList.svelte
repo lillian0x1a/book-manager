@@ -56,7 +56,7 @@
 </script>
 
 <div class="mb-4">
-	<Input
+	<input
 		type="text"
 		class="w-full"
 		placeholder="タイトル・著者・ISBNで検索"
