@@ -8,6 +8,7 @@
 	let publishedDate = '';
 	let isLoading = false; // ローディング状態
 	let errorMessage = ''; // エラーメッセージ
+	let imageLinks = { thumbnail: '' }; // 追加: サムネイル画像リンク
 
 	async function searchByISBN() {
 		if (!isbn) {
@@ -23,6 +24,7 @@
 			title = bookData.title || '';
 			author = bookData.authors || '';
 			publishedDate = bookData.publishedDate || '';
+			imageLinks = bookData.imageLinks || { thumbnail: '' }; // 追加: 画像リンクの取得
 			errorMessage = ''; // 成功時エラーメッセージクリア
 		} else {
 			errorMessage = '指定されたISBNの書籍が見つかりませんでした。';
@@ -35,14 +37,15 @@
 				title,
 				author,
 				isbn: isbn || undefined,
-				publishedDate: publishedDate || undefined
-				// status: 'available' // Removed to match type
+				publishedDate: publishedDate || undefined,
+				imageLinks: imageLinks?.thumbnail ? { thumbnail: imageLinks.thumbnail } : undefined
 			});
 
 			title = '';
 			author = '';
 			isbn = '';
 			publishedDate = '';
+			imageLinks = { thumbnail: '' };
 		}
 	};
 </script>
@@ -82,4 +85,11 @@
 	<button type="submit" class="px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-600 w-full"
 		>追加</button
 	>
+	{#if imageLinks?.thumbnail}
+		<img
+			src={imageLinks.thumbnail}
+			alt="カバー画像"
+			class="w-32 h-48 object-cover rounded-md shadow-md mb-2"
+		/>
+	{/if}
 </form>
