@@ -1,5 +1,5 @@
 // src/lib/stores/books.ts
-import { writable, get } from 'svelte/store';
+import { writable, get, derived } from 'svelte/store';
 import type { Book } from '$lib/types/book';
 
 function createBooksStore() {
@@ -24,9 +24,20 @@ function createBooksStore() {
 		localStorage.setItem('books', JSON.stringify(books));
 	}
 
+	const searchBooks = (searchTerm: string) => {
+		update((books) => {
+			const lowerSearchTerm = searchTerm.toLowerCase();
+			return books.filter(
+				(book) =>
+					book.title.toLowerCase().includes(lowerSearchTerm) ||
+					book.author.toLowerCase().includes(lowerSearchTerm) ||
+					(book.isbn && book.isbn.includes(lowerSearchTerm))
+			);
+		});
+	};
+
 	return {
 		subscribe,
-
 		addBook: (
 			payload: Omit<Book, 'id' | 'status' | 'imageLinks'> & { imageLinks?: { thumbnail: string } }
 		) => {
@@ -42,7 +53,6 @@ function createBooksStore() {
 				return next;
 			});
 		},
-
 		removeBook: (id: string) => {
 			update((books: Book[]) => {
 				const next = books.filter((b) => b.id !== id);
@@ -50,7 +60,6 @@ function createBooksStore() {
 				return next;
 			});
 		},
-
 		toggleStatus: (id: string) => {
 			update((books) => {
 				const next = books.map((b) =>
@@ -68,35 +77,20 @@ function createBooksStore() {
 				return next;
 			});
 		},
-
 		reset: () => {
 			set([]);
 			persist([]);
 		},
-
 		importBooks: (imported: Book[]) => {
 			set(imported); // ストアを直接セット
 			persist(imported); // localStorageに保存
 		},
-
-		// 新規: エクスポート用（データ取得のみ）
 		exportData: () => {
 			if (typeof window === 'undefined') return null; // サーバー側では何もしない
 			// 現在のストアデータを返す
 			return get({ subscribe });
 		},
-
-		searchBooks: (searchTerm: string) =>
-			update((books) => {
-				const lowerSearchTerm = searchTerm.toLowerCase();
-				return books.filter(
-					(book) =>
-						book.title.toLowerCase().includes(lowerSearchTerm) ||
-						book.author.toLowerCase().includes(lowerSearchTerm) ||
-						(book.isbn && book.isbn.includes(lowerSearchTerm))
-				);
-			}),
-
+		searchBooks,
 		sortBooks: (sortBy: 'title' | 'author' | 'publishedDate' | 'status') =>
 			update((books) => {
 				return [...books].sort((a: Book, b: Book) => {
@@ -109,7 +103,6 @@ function createBooksStore() {
 					return 0;
 				});
 			}),
-
 		filterBooks: (status: 'available' | 'borrowed') =>
 			update((books) => {
 				return books.filter((book: Book) => book.status === status);
@@ -118,3 +111,4 @@ function createBooksStore() {
 }
 
 export const booksStore = createBooksStore();
+export const filteredBooks = writable<Book[]>([]);
