@@ -28,7 +28,7 @@
 	}
 
 	function openModal(book: Book) {
-		selectedBook = book;
+		selectedBook = { ...book };
 	}
 
 	function closeModal() {
