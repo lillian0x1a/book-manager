@@ -106,7 +106,14 @@ function createBooksStore() {
 		filterBooks: (status: 'available' | 'borrowed') =>
 			update((books) => {
 				return books.filter((book: Book) => book.status === status);
-			})
+			}),
+		updateBook: (updated: Book) => {
+			update((books: Book[]) => {
+				const next = books.map((b) => (b.id === updated.id ? { ...b, ...updated } : b));
+				persist(next);
+				return next;
+			});
+		}
 	};
 }
 

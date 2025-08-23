@@ -34,6 +34,13 @@
 	function closeModal() {
 		selectedBook = null;
 	}
+
+	function saveEdit() {
+		if (selectedBook) {
+			booksStore.updateBook(selectedBook);
+			closeModal();
+		}
+	}
 </script>
 
 <div class="mb-4">
@@ -82,9 +89,64 @@
 						{book.status === 'available' ? '貸出' : '返却'}
 					</button>
 					<button on:click={() => booksStore.removeBook(book.id)}>削除</button>
-					<button on:click={() => openModal(book)}>詳細</button>
+					<button on:click={() => openModal(book)}>編集</button>
 				</div>
 			</Card.Footer>
 		</Card.Root>
 	{/each}
 </div>
+
+<!-- 編集モーダル -->
+{#if selectedBook}
+	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+		<div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-md">
+			<h2 class="text-lg font-bold mb-4">書籍情報編集</h2>
+			<form on:submit|preventDefault={saveEdit} class="space-y-4">
+				<div>
+					<label class="block mb-1" for="edit-title">タイトル</label>
+					<input
+						id="edit-title"
+						class="w-full border rounded px-3 py-2"
+						type="text"
+						bind:value={selectedBook.title}
+						required
+					/>
+				</div>
+				<div>
+					<label class="block mb-1" for="edit-author">著者</label>
+					<input
+						id="edit-author"
+						class="w-full border rounded px-3 py-2"
+						type="text"
+						bind:value={selectedBook.author}
+						required
+					/>
+				</div>
+				<div>
+					<label class="block mb-1" for="edit-isbn">ISBN</label>
+					<input
+						id="edit-isbn"
+						class="w-full border rounded px-3 py-2"
+						type="text"
+						bind:value={selectedBook.isbn}
+					/>
+				</div>
+				<div>
+					<label class="block mb-1" for="edit-publishedDate">出版日</label>
+					<input
+						id="edit-publishedDate"
+						class="w-full border rounded px-3 py-2"
+						type="date"
+						bind:value={selectedBook.publishedDate}
+					/>
+				</div>
+				<div class="flex justify-end gap-2">
+					<button type="button" class="px-4 py-2 rounded bg-gray-300" on:click={closeModal}
+						>キャンセル</button
+					>
+					<button type="submit" class="px-4 py-2 rounded bg-indigo-600 text-white">保存</button>
+				</div>
+			</form>
+		</div>
+	</div>
+{/if}
