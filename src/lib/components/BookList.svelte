@@ -1,11 +1,22 @@
-<script lang="ts">
+<![CDATA[<script lang="ts">
 	import { booksStore } from '$lib/stores/books';
 	import type { Book } from '$lib/types/book';
 	import { Button } from '$lib/components/ui/button/index';
 	import * as Card from '$lib/components/ui/card/index';
+	import BookDetailModal from './BookDetailModal.svelte';
 
 	$: statusColor = (status: Book['status']) =>
 		status === 'available' ? 'text-green-600' : 'text-red-600';
+
+	let selectedBook: Book | null = null;
+
+	function openModal(book: Book) {
+		selectedBook = book;
+	}
+
+	function closeModal() {
+		selectedBook = null;
+	}
 </script>
 
 <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
@@ -13,6 +24,13 @@
 		<Card.Root class="max-w-md mx-auto">
 			<Card.Header>
 				<h3 class="text-lg font-bold">{book.title}</h3>
+				{#if book.imageLinks?.thumbnail}
+					<img
+						src={book.imageLinks.thumbnail}
+						alt="{book.title}のカバー画像"
+						class="w-32 h-48 object-cover rounded-md shadow-md"
+					/>
+				{/if}
 			</Card.Header>
 			<Card.Content>
 				<p class="text-gray-600">著者: {book.author}</p>
@@ -29,8 +47,14 @@
 						{book.status === 'available' ? '貸出' : '返却'}
 					</Button>
 					<Button variant="destructive" onclick={() => booksStore.removeBook(book.id)}>削除</Button>
+					<Button on:click={() => openModal(book)}>詳細</Button>
 				</div>
 			</Card.Footer>
 		</Card.Root>
 	{/each}
 </div>
+
+{#if selectedBook}
+	<BookDetailModal book={selectedBook} on:close={closeModal} />
+{/if}
+]]>

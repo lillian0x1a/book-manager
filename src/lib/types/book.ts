@@ -5,4 +5,5 @@ export interface Book {
 	isbn?: string;
 	publishedDate?: string;
 	status: 'available' | 'borrowed';
+	imageLinks?: { thumbnail: string };
 }
