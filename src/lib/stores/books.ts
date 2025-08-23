@@ -27,7 +27,9 @@ function createBooksStore() {
 	return {
 		subscribe,
 
-		addBook: (payload: Omit<Book, 'id' | 'status' | 'imageLinks'> & { imageLinks?: { thumbnail: string } }) => {
+		addBook: (
+			payload: Omit<Book, 'id' | 'status' | 'imageLinks'> & { imageLinks?: { thumbnail: string } }
+		) => {
 			update((books: Book[]) => {
 				const newBook: Book = {
 					...payload,
@@ -38,9 +40,10 @@ function createBooksStore() {
 				const next = [...books, newBook];
 				persist(next);
 				return next;
-			})
+			});
+		},
 
-		(id: string) => {
+		removeBook: (id: string) => {
 			update((books: Book[]) => {
 				const next = books.filter((b) => b.id !== id);
 				persist(next);
@@ -58,7 +61,7 @@ function createBooksStore() {
 									b.status === 'available'
 										? ('borrowed' as 'borrowed')
 										: ('available' as 'available')
-						  }
+							}
 						: b
 				);
 				persist(next);
@@ -69,7 +72,6 @@ function createBooksStore() {
 		reset: () => {
 			set([]);
 			persist([]);
-		}
 		},
 
 		importBooks: (imported: Book[]) => {
@@ -106,19 +108,12 @@ function createBooksStore() {
 					}
 					return 0;
 				});
+			}),
+
+		filterBooks: (status: 'available' | 'borrowed') =>
+			update((books) => {
+				return books.filter((book: Book) => book.status === status);
 			})
-	},
-
-	 filterBooks: (status: 'available' | 'borrowed') => {
-	   update((books: Book[]) => {
-	     return books.filter((book: Book) => book.status === status);
-	   });
-	},
-
-	filterBooks: (status: 'available' | 'borrowed') =>
-		update((books) => {
-			return books.filter((book: Book) => book.status === status);
-		})
 	};
 }
 

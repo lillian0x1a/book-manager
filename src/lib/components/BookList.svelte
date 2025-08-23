@@ -1,9 +1,7 @@
-<![CDATA[<script lang="ts">
+<script lang="ts">
 	import { booksStore } from '$lib/stores/books';
 	import type { Book } from '$lib/types/book';
-	import { Button } from '$lib/components/ui/button/index';
 	import * as Card from '$lib/components/ui/card/index';
-	import BookDetailModal from './BookDetailModal.svelte';
 
 	$: statusColor = (status: Book['status']) =>
 		status === 'available' ? 'text-green-600' : 'text-red-600';
@@ -43,18 +41,13 @@
 			</Card.Content>
 			<Card.Footer>
 				<div class="flex space-x-2">
-					<Button onclick={() => booksStore.toggleStatus(book.id)}>
+					<button on:click={() => booksStore.toggleStatus(book.id)}>
 						{book.status === 'available' ? '貸出' : '返却'}
-					</Button>
-					<Button variant="destructive" onclick={() => booksStore.removeBook(book.id)}>削除</Button>
-					<Button on:click={() => openModal(book)}>詳細</Button>
+					</button>
+					<button on:click={() => booksStore.removeBook(book.id)}>削除</button>
+					<button on:click={() => openModal(book)}>詳細</button>
 				</div>
 			</Card.Footer>
 		</Card.Root>
 	{/each}
 </div>
-
-{#if selectedBook}
-	<BookDetailModal book={selectedBook} on:close={closeModal} />
-{/if}
-]]>
