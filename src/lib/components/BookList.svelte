@@ -9,6 +9,8 @@
 	let selectedBook: Book | null = null;
 	let searchTerm = '';
 	let sortBy: 'title' | 'author' | 'publishedDate' = 'title';
+	let showEdit = false;
+	let showDetail = false;
 
 	$: {
 		$filteredBooks = $booksStore.filter((book: Book) => {
@@ -29,10 +31,20 @@
 
 	function openModal(book: Book) {
 		selectedBook = { ...book };
+		showEdit = true;
+		showDetail = false;
+	}
+
+	function openDetail(book: Book) {
+		selectedBook = { ...book };
+		showDetail = true;
+		showEdit = false;
 	}
 
 	function closeModal() {
 		selectedBook = null;
+		showEdit = false;
+		showDetail = false;
 	}
 
 	function saveEdit() {
@@ -90,6 +102,7 @@
 					</button>
 					<button on:click={() => booksStore.removeBook(book.id)}>削除</button>
 					<button on:click={() => openModal(book)}>編集</button>
+					<button on:click={() => openDetail(book)}>詳細</button>
 				</div>
 			</Card.Footer>
 		</Card.Root>
@@ -97,7 +110,7 @@
 </div>
 
 <!-- 編集モーダル -->
-{#if selectedBook}
+{#if selectedBook && showEdit}
 	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 		<div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-md">
 			<h2 class="text-lg font-bold mb-4">書籍情報編集</h2>
@@ -147,6 +160,49 @@
 					<button type="submit" class="px-4 py-2 rounded bg-indigo-600 text-white">保存</button>
 				</div>
 			</form>
+		</div>
+	</div>
+{/if}
+
+<!-- 詳細モーダル -->
+{#if selectedBook && showDetail}
+	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+		<div class="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-md">
+			<h2 class="text-lg font-bold mb-4">書籍詳細</h2>
+			<div class="space-y-2">
+				<div>
+					<span class="font-semibold">タイトル:</span>
+					{selectedBook.title}
+				</div>
+				<div>
+					<span class="font-semibold">著者:</span>
+					{selectedBook.author}
+				</div>
+				<div>
+					<span class="font-semibold">ISBN:</span>
+					{selectedBook.isbn}
+				</div>
+				<div>
+					<span class="font-semibold">出版日:</span>
+					{selectedBook.publishedDate}
+				</div>
+				<div>
+					<span class="font-semibold">状態:</span>
+					{selectedBook.status === 'available' ? '利用可能' : '貸出中'}
+				</div>
+				{#if selectedBook.imageLinks?.thumbnail}
+					<img
+						src={selectedBook.imageLinks.thumbnail}
+						alt="カバー画像"
+						class="w-32 h-48 object-cover rounded-md shadow-md mt-2"
+					/>
+				{/if}
+			</div>
+			<div class="flex justify-end mt-4">
+				<button type="button" class="px-4 py-2 rounded bg-gray-300" on:click={closeModal}
+					>閉じる</button
+				>
+			</div>
 		</div>
 	</div>
 {/if}
