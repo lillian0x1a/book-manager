@@ -2,11 +2,6 @@
 	import { booksStore } from '$lib/stores/books';
 	import { fetchBookByISBN } from '$lib/utils/bookApi';
 
-	import { Button } from '$lib/components/ui/button/index';
-	import { Label } from '$lib/components/ui/label/index';
-	import { Input } from '$lib/components/ui/input/index';
-	import * as Card from '$lib/components/ui/card/index';
-
 	let title = '';
 	let author = '';
 	let isbn = '';
@@ -59,7 +54,6 @@
 			placeholder="ISBN"
 			class="px-3 py-2 border rounded w-full"
 			on:change={searchByISBN}
-		/>
 		/>
 		<button
 			on:click|preventDefault={searchByISBN}
