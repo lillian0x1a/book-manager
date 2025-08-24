@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { booksStore } from '$lib/stores/books';
 	// SVGアイコンコンポーネントをインポート
-	import SyncIcon from '$lib/components/icons/SyncIcon.svelte';
 	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
 	import DownloadIcon from '$lib/components/icons/DownloadIcon.svelte';
 	import UploadIcon from '$lib/components/icons/UploadIcon.svelte';
