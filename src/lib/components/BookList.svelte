@@ -1,6 +1,18 @@
 <script lang="ts">
 	import { booksStore, filteredBooks } from '$lib/stores/books';
 	import type { Book } from '$lib/types/book';
+
+	import BookIcon from '$lib/components/icons/BookIcon.svelte';
+	import SearchIcon from '$lib/components/icons/SearchIcon.svelte';
+	import DropdownIcon from '$lib/components/icons/DropdownIcon.svelte';
+	import LargeBookIcon from '$lib/components/icons/LargeBookIcon.svelte';
+	import InfoIcon from '$lib/components/icons/InfoIcon.svelte';
+	import EditIcon from '$lib/components/icons/EditIcon.svelte';
+	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
+	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
+	import MediumBookIcon from '$lib/components/icons/MediumBookIcon.svelte';
+	import LargeBookIconForDetail from '$lib/components/icons/LargeBookIconForDetail.svelte';
+
 	$: statusColor = (status: Book['status']) =>
 		status === 'available' ? 'text-green-600' : 'text-red-600';
 	let selectedBook: Book | null = null;
@@ -52,25 +64,11 @@
 		<header class="mb-10">
 			<div class="flex items-center mb-4">
 				<div class="bg-green-100 p-2 rounded-lg mr-3">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-6 w-6 text-green-600"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-						/>
-					</svg>
+					<BookIcon class="text-green-600" />
 				</div>
 				<h2 class="text-xl font-medium text-gray-900">書籍一覧</h2>
 			</div>
 		</header>
-
 		<!-- 検索とフィルターセクション -->
 		<section class="bg-white rounded-xl shadow-sm p-6 mb-8">
 			<div class="mb-6">
@@ -82,24 +80,10 @@
 						bind:value={searchTerm}
 					/>
 					<div class="absolute right-3 top-3 text-gray-400">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-5 w-5"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-							/>
-						</svg>
+						<SearchIcon />
 					</div>
 				</div>
 			</div>
-
 			<div class="flex items-center justify-between">
 				<div class="flex items-center space-x-4">
 					<span class="text-gray-600">並び替え:</span>
@@ -115,43 +99,20 @@
 						<div
 							class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
 						>
-							<svg
-								class="fill-current h-4 w-4"
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 20 20"
-							>
-								<path
-									d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-								/>
-							</svg>
+							<DropdownIcon />
 						</div>
 					</div>
 				</div>
-
 				<div class="text-sm text-gray-500">
 					{$filteredBooks.length} 冊の書籍
 				</div>
 			</div>
 		</section>
-
 		<!-- 書籍一覧 -->
 		<section>
 			{#if $filteredBooks.length === 0}
 				<div class="text-center py-12">
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						class="h-16 w-16 mx-auto text-gray-300 mb-4"
-						fill="none"
-						viewBox="0 0 24 24"
-						stroke="currentColor"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="1.5"
-							d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-						/>
-					</svg>
+					<LargeBookIcon class="mx-auto text-gray-300 mb-4" />
 					<h3 class="text-lg font-medium text-gray-900 mb-1">書籍が見つかりません</h3>
 					<p class="text-gray-500">検索条件を変更するか、新しい書籍を追加してください</p>
 				</div>
@@ -173,20 +134,7 @@
 										<div
 											class="w-16 h-24 bg-gray-100 rounded-lg flex items-center justify-center mr-4"
 										>
-											<svg
-												xmlns="http://www.w3.org/2000/svg"
-												class="h-8 w-8 text-gray-400"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="1.5"
-													d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-												/>
-											</svg>
+											<MediumBookIcon class="text-gray-400" />
 										</div>
 									{/if}
 									<div class="flex-1 min-w-0">
@@ -201,11 +149,9 @@
 										</div>
 									</div>
 								</div>
-
 								{#if book.isbn}
 									<p class="text-xs text-gray-500 mt-3">ISBN: {book.isbn}</p>
 								{/if}
-
 								<div class="mt-4 flex space-x-2">
 									<button
 										on:click={() => booksStore.toggleStatus(book.id)}
@@ -217,58 +163,19 @@
 										on:click={() => openDetail(book)}
 										class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition"
 									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											class="h-5 w-5"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-											/>
-										</svg>
+										<InfoIcon />
 									</button>
 									<button
 										on:click={() => openModal(book)}
 										class="p-2 rounded-lg text-gray-500 hover:bg-gray-100 transition"
 									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											class="h-5 w-5"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-											/>
-										</svg>
+										<EditIcon />
 									</button>
 									<button
 										on:click={() => booksStore.removeBook(book.id)}
 										class="p-2 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-500 transition"
 									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											class="h-5 w-5"
-											fill="none"
-											viewBox="0 0 24 24"
-											stroke="currentColor"
-										>
-											<path
-												stroke-linecap="round"
-												stroke-linejoin="round"
-												stroke-width="2"
-												d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-											/>
-										</svg>
+										<DeleteIcon />
 									</button>
 								</div>
 							</div>
@@ -288,23 +195,9 @@
 				<div class="flex justify-between items-center mb-5">
 					<h2 class="text-xl font-semibold text-gray-900">書籍情報編集</h2>
 					<button on:click={closeModal} class="text-gray-400 hover:text-gray-500">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-6 w-6"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M6 18L18 6M6 6l12 12"
-							/>
-						</svg>
+						<CloseIcon />
 					</button>
 				</div>
-
 				<form on:submit|preventDefault={saveEdit} class="space-y-5">
 					<div>
 						<label class="block text-sm font-medium text-gray-700 mb-1" for="edit-title"
@@ -318,7 +211,6 @@
 							required
 						/>
 					</div>
-
 					<div>
 						<label class="block text-sm font-medium text-gray-700 mb-1" for="edit-author"
 							>著者</label
@@ -331,7 +223,6 @@
 							required
 						/>
 					</div>
-
 					<div>
 						<label class="block text-sm font-medium text-gray-700 mb-1" for="edit-isbn">ISBN</label>
 						<input
@@ -341,7 +232,6 @@
 							bind:value={selectedBook.isbn}
 						/>
 					</div>
-
 					<div>
 						<label class="block text-sm font-medium text-gray-700 mb-1" for="edit-publishedDate"
 							>出版日</label
@@ -353,7 +243,6 @@
 							bind:value={selectedBook.publishedDate}
 						/>
 					</div>
-
 					<div class="flex justify-end space-x-3 pt-2">
 						<button
 							type="button"
@@ -383,23 +272,9 @@
 				<div class="flex justify-between items-center mb-5">
 					<h2 class="text-xl font-semibold text-gray-900">書籍詳細</h2>
 					<button on:click={closeModal} class="text-gray-400 hover:text-gray-500">
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							class="h-6 w-6"
-							fill="none"
-							viewBox="0 0 24 24"
-							stroke="currentColor"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M6 18L18 6M6 6l12 12"
-							/>
-						</svg>
+						<CloseIcon />
 					</button>
 				</div>
-
 				<div class="space-y-4">
 					<div class="flex items-start">
 						{#if selectedBook.imageLinks?.thumbnail}
@@ -410,27 +285,12 @@
 							/>
 						{:else}
 							<div class="w-20 h-28 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-10 w-10 text-gray-400"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="1.5"
-										d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-									/>
-								</svg>
+								<LargeBookIconForDetail class="text-gray-400" />
 							</div>
 						{/if}
-
 						<div class="flex-1">
 							<h3 class="text-lg font-medium text-gray-900">{selectedBook.title}</h3>
 							<p class="text-gray-600 mt-1">{selectedBook.author}</p>
-
 							<div class="mt-3">
 								<span
 									class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${selectedBook.status === 'available' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
@@ -440,7 +300,6 @@
 							</div>
 						</div>
 					</div>
-
 					<div class="space-y-3 pt-2">
 						{#if selectedBook.isbn}
 							<div>
@@ -448,7 +307,6 @@
 								<p class="text-gray-900">{selectedBook.isbn}</p>
 							</div>
 						{/if}
-
 						{#if selectedBook.publishedDate}
 							<div>
 								<p class="text-sm text-gray-500">出版日</p>
@@ -457,7 +315,6 @@
 						{/if}
 					</div>
 				</div>
-
 				<div class="flex justify-end mt-8 pt-4 border-t border-gray-200">
 					<button
 						type="button"
