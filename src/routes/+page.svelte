@@ -23,17 +23,19 @@
 	});
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex">
+<div
+	class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 flex overflow-hidden"
+>
 	<!-- macOS用サイドバー -->
 	<nav
-		class="w-64 bg-white/30 backdrop-blur-lg border border-white/20 flex-shrink-0 flex flex-col shadow-lg min-h-screen {isMobile
+		class="w-64 bg-white/30 backdrop-blur-lg border border-white/20 flex-shrink-0 flex flex-col shadow-lg min-h-screen overflow-hidden {isMobile
 			? 'hidden'
 			: 'block'} z-10"
 	>
 		<div class="p-6 border-b border-white/20">
 			<h2 class="text-2xl font-semibold text-gray-800">読書管理</h2>
 		</div>
-		<div class="flex-1 overflow-y-auto p-4">
+		<div class="flex-1 p-4">
 			<ul class="space-y-1">
 				<li>
 					<button
@@ -75,7 +77,7 @@
 		</div>
 	</nav>
 	<!-- メインコンテンツエリア -->
-	<main class="flex-1">
+	<main class="flex-1 overflow-hidden">
 		<!-- iOS用ナビゲーションバー -->
 		{#if isMobile}
 			<header
@@ -113,7 +115,6 @@
 				{/if}
 			</header>
 		{/if}
-
 		<!-- macOS用ツールバー - 常に表示 -->
 		{#if !isMobile}
 			<div
@@ -150,8 +151,9 @@
 				{/if}
 			</div>
 		{/if}
-
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
+		<div
+			class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8 h-[calc(100vh-5rem)] overflow-y-auto"
+		>
 			<!-- コンテンツエリア -->
 			{#if activeTab === 'bookList'}
 				<BookList />
