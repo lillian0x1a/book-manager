@@ -140,7 +140,7 @@
 			<button
 				class="flex flex-col items-center justify-center w-16 h-16 rounded-xl transition-colors {activeTab ===
 				'bookList'
-					? 'text-blue-500'
+					? 'text-blue-500 active-tab'
 					: 'text-gray-500'}"
 				on:click={() => (activeTab = 'bookList')}
 			>
@@ -150,7 +150,7 @@
 			<button
 				class="flex flex-col items-center justify-center w-16 h-16 rounded-xl transition-colors {activeTab ===
 				'addBook'
-					? 'text-blue-500'
+					? 'text-blue-500 active-tab'
 					: 'text-gray-500'}"
 				on:click={() => (activeTab = 'addBook')}
 			>
@@ -160,7 +160,7 @@
 			<button
 				class="flex flex-col items-center justify-center w-16 h-16 rounded-xl transition-colors {activeTab ===
 				'backupRestore'
-					? 'text-blue-500'
+					? 'text-blue-500 active-tab'
 					: 'text-gray-500'}"
 				on:click={() => (activeTab = 'backupRestore')}
 			>
@@ -173,7 +173,7 @@
 
 <style>
 	/* Appleのシステムフォントを優先 */
-	body {
+	:global(body) {
 		font-family:
 			-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 	}
