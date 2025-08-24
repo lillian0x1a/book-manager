@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { booksStore } from '$lib/stores/books';
+	import { books } from '$lib/stores/books';
 	// SVGアイコンコンポーネントをインポート
 	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
 	import DownloadIcon from '$lib/components/icons/DownloadIcon.svelte';
@@ -44,7 +44,7 @@
 	function exportData() {
 		isExporting = true;
 		try {
-			const data = $booksStore;
+			const data = $books;
 			const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
@@ -88,7 +88,7 @@
 
 	function confirmImport() {
 		if (importedData) {
-			booksStore.importBooks(importedData);
+			books.importBooks(importedData);
 			showNotification('インポートが成功しました！', 'success');
 			selectedFile = null;
 			importedData = null;

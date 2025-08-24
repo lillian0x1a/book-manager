@@ -1,253 +1,143 @@
 <script lang="ts">
-	import { booksStore } from '$lib/stores/books';
+	import { books } from '$lib/stores/books';
 	import { fetchBookByISBN } from '$lib/utils/bookApi';
-	// SVGアイコンコンポーネントをインポート
 	import AddIcon from '$lib/components/icons/AddIcon.svelte';
 	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
 	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
 	import { onMount } from 'svelte';
+	import { ValidationError } from '$lib/types/errors';
+	import { isISBN } from '$lib/utils/validators';
 
-	let title = '';
-	let author = '';
-	let isbn = '';
-	let publishedDate = '';
+	let title: string = '';
+	let author: string = '';
+	let isbn: string = '';
+	let publishedDate: string = '';
 	let isLoading = false;
-	let errorMessage = '';
-	let imageLinks = { thumbnail: '' };
+	let showIsbnTooltip = false;
+	let errorMessage: string | null = null;
 
-	// バリデーションエラー
-	let validationErrors = {
-		title: '',
-		author: ''
-	};
-
-	// コンポーネントがマウントされたときにスクロールを無効化
-	onMount(() => {
-		// bodyのスクロールを無効化
-		document.body.style.overflow = 'hidden';
-		document.body.style.position = 'fixed';
-		document.body.style.width = '100%';
-		document.body.style.height = '100%';
-		// htmlのスクロールを無効化
-		document.documentElement.style.overflow = 'hidden';
-		document.documentElement.style.position = 'fixed';
-		document.documentElement.style.width = '100%';
-		document.documentElement.style.height = '100%';
-		// クリーンアップ関数
-		return () => {
-			document.body.style.overflow = '';
-			document.body.style.position = '';
-			document.body.style.width = '';
-			document.body.style.height = '';
-			document.documentElement.style.overflow = '';
-			document.documentElement.style.position = '';
-			document.documentElement.style.width = '';
-			document.documentElement.style.height = '';
-		};
-	});
-
-	async function searchByISBN() {
-		if (!isbn) {
-			errorMessage = 'ISBNを入力してください。';
+	async function handleFetchByISBN() {
+		errorMessage = null;
+		if (!isISBN(isbn)) {
+			errorMessage = 'ISBN の形式が正しくありません';
 			return;
 		}
 		isLoading = true;
-		errorMessage = '';
-		const bookData = await fetchBookByISBN(isbn);
-		isLoading = false;
-		if (bookData) {
-			title = bookData.title || '';
-			author = bookData.authors || '';
-			publishedDate = bookData.publishedDate || '';
-			imageLinks = bookData.imageLinks || { thumbnail: '' };
-			errorMessage = '';
-			// 検索成功時にバリデーションエラーをクリア
-			validationErrors.title = '';
-			validationErrors.author = '';
-		} else {
-			errorMessage = '指定されたISBNの書籍が見つかりませんでした。';
+		try {
+			const data = await fetchBookByISBN(isbn);
+			if (data) {
+				title = data.title ?? ''; // undefinedの場合は空文字列を代入
+				author = data.authors ?? ''; // undefinedの場合は空文字列を代入
+				publishedDate = data.publishedDate ?? ''; // undefinedの場合は空文字列を代入
+			} else {
+				errorMessage = '該当する書籍が見つかりませんでした';
+			}
+		} catch (e) {
+			errorMessage = e instanceof ValidationError ? e.message : '書籍データの取得に失敗しました';
+			console.error(e);
+		} finally {
+			isLoading = false;
 		}
 	}
 
-	// フォームバリデーション
-	function validateForm() {
-		let isValid = true;
-
-		// タイトルのバリデーション
-		if (!title.trim()) {
-			validationErrors.title = 'タイトルは必須項目です';
-			isValid = false;
-		} else {
-			validationErrors.title = '';
-		}
-
-		// 著者のバリデーション
-		if (!author.trim()) {
-			validationErrors.author = '著者は必須項目です';
-			isValid = false;
-		} else {
-			validationErrors.author = '';
-		}
-
-		return isValid;
-	}
-
-	const handleSubmit = () => {
-		// バリデーションを実行
-		if (!validateForm()) {
-			return;
-		}
-
-		if (title && author) {
-			booksStore.addBook({
+	function handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+		errorMessage = null;
+		try {
+			books.add({
 				title,
 				author,
-				isbn: isbn || undefined,
-				publishedDate: publishedDate || undefined,
-				imageLinks: imageLinks?.thumbnail ? { thumbnail: imageLinks.thumbnail } : undefined
+				isbn: isbn || '', // undefinedの代わりに空文字列を渡す
+				publishedDate: publishedDate || '' // undefinedの代わりに空文字列を渡す
 			});
+			// reset
 			title = '';
 			author = '';
 			isbn = '';
 			publishedDate = '';
-			imageLinks = { thumbnail: '' };
-			// フォーム送信後にバリデーションエラーをクリア
-			validationErrors.title = '';
-			validationErrors.author = '';
+		} catch (e) {
+			errorMessage = e instanceof ValidationError ? e.message : '入力内容を確認してください';
+			console.error(e);
 		}
-	};
+	}
 </script>
 
-<svelte:head>
-	<style>
-		html,
-		body {
-			overflow: hidden !important;
-			position: fixed !important;
-			width: 100% !important;
-			height: 100% !important;
-			margin: 0 !important;
-			padding: 0 !important;
-			touch-action: none !important;
-		}
-		* {
-			touch-action: none !important;
-		}
-	</style>
-</svelte:head>
+<div class="w-full max-w-2xl mx-auto">
+	<div class="bg-white/60 backdrop-blur-md rounded-2xl shadow-lg p-6">
+		<h2 class="text-xl font-bold mb-4">書籍を追加</h2>
 
-<div
-	class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 md:p-8 flex items-center justify-center h-screen w-screen overflow-hidden fixed inset-0"
->
-	<div
-		class="bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-xl p-6 max-w-md w-full max-h-[calc(100vh-2rem)] overflow-y-auto overflow-x-hidden"
-	>
-		<form class="space-y-5" on:submit|preventDefault={handleSubmit}>
-			<div class="space-y-1.5">
-				<label for="isbn-input" class="text-sm font-medium text-gray-700">ISBN</label>
-				<div class="flex space-x-2">
-					<input
-						id="isbn-input"
-						bind:value={isbn}
-						placeholder="978-3-16-148410-0"
-						class="flex-1 px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition"
-						on:change={searchByISBN}
-					/>
-					<button
-						on:click|preventDefault={searchByISBN}
-						class="px-5 py-3 rounded-xl bg-indigo-500/80 backdrop-blur-sm text-white font-medium hover:bg-indigo-600/80 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:ring-offset-2 transition-all"
-						disabled={isLoading}
-					>
-						{#if isLoading}
-							<div class="flex items-center justify-center">
-								<SpinnerIcon class="mr-2 text-white" />
-								検索中
-							</div>
-						{:else}
-							検索
-						{/if}
-					</button>
-				</div>
+		{#if errorMessage}
+			<div class="mb-4 p-3 rounded-lg bg-red-100 border border-red-200 text-red-800">
+				{errorMessage}
 			</div>
+		{/if}
 
-			{#if errorMessage}
-				<div class="mt-2 p-3 bg-red-200/50 backdrop-blur-sm rounded-xl border border-red-200/50">
-					<p class="text-sm text-red-700">{errorMessage}</p>
-				</div>
-			{/if}
-
-			<div class="space-y-1.5">
-				<label for="title-input" class="text-sm font-medium text-gray-700">タイトル *</label>
+		<form on:submit|preventDefault={handleSubmit} class="space-y-4">
+			<div>
+				<label class="block text-sm font-medium mb-1" for="title"
+					>タイトル <span class="text-red-500">*</span></label
+				>
 				<input
-					id="title-input"
+					id="title"
 					bind:value={title}
-					placeholder="書籍のタイトル"
-					class="w-full px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition {validationErrors.title
-						? 'border-red-400/50'
-						: ''}"
-					on:input={() => (validationErrors.title = '')}
+					required
+					placeholder="例: 吾輩は猫である"
+					class="w-full border rounded-lg px-3 py-2"
 				/>
-				{#if validationErrors.title}
-					<div
-						class="mt-1.5 p-2 bg-red-200/50 backdrop-blur-sm rounded-lg border border-red-200/50"
-					>
-						<p class="text-xs text-red-700 flex items-center">
-							<CloseIcon class="mr-1.5 text-xs" />
-							{validationErrors.title}
-						</p>
-					</div>
-				{/if}
 			</div>
 
-			<div class="space-y-1.5">
-				<label for="author-input" class="text-sm font-medium text-gray-700">著者 *</label>
+			<div>
+				<label class="block text-sm font-medium mb-1" for="author"
+					>著者 <span class="text-red-500">*</span></label
+				>
 				<input
-					id="author-input"
+					id="author"
 					bind:value={author}
-					placeholder="著者名"
-					class="w-full px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition {validationErrors.author
-						? 'border-red-400/50'
-						: ''}"
-					on:input={() => (validationErrors.author = '')}
-				/>
-				{#if validationErrors.author}
-					<div
-						class="mt-1.5 p-2 bg-red-200/50 backdrop-blur-sm rounded-lg border border-red-200/50"
-					>
-						<p class="text-xs text-red-700 flex items-center">
-							<CloseIcon class="mr-1.5 text-xs" />
-							{validationErrors.author}
-						</p>
-					</div>
-				{/if}
-			</div>
-
-			<div class="space-y-1.5">
-				<label for="published-date-input" class="text-sm font-medium text-gray-700">出版日</label>
-				<input
-					id="published-date-input"
-					type="date"
-					bind:value={publishedDate}
-					class="w-full px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition"
+					required
+					placeholder="例: 夏目漱石"
+					class="w-full border rounded-lg px-3 py-2"
 				/>
 			</div>
 
-			{#if imageLinks?.thumbnail}
-				<div class="space-y-1.5">
-					<div class="text-sm font-medium text-gray-700">カバー画像</div>
-					<div class="flex justify-center">
-						<img
-							src={imageLinks.thumbnail}
-							alt="カバー画像"
-							class="h-48 object-contain rounded-xl shadow-md bg-white/20 backdrop-blur-sm p-2 max-w-full"
-						/>
-					</div>
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-2 items-end">
+				<div class="md:col-span-2">
+					<label class="block text-sm font-medium mb-1" for="ISBN">ISBN</label>
+					<input
+						id="ISBN"
+						bind:value={isbn}
+						placeholder="例: 978-4-xx-xxxxxx-x"
+						class="w-full border rounded-lg px-3 py-2"
+					/>
 				</div>
-			{/if}
+				<button
+					type="button"
+					on:click={handleFetchByISBN}
+					class="w-full md:w-auto px-4 py-2 rounded-xl bg-indigo-500 text-white flex items-center justify-center gap-2 disabled:opacity-60"
+					disabled={isLoading || !isbn}
+				>
+					{#if isLoading}
+						<SpinnerIcon />
+						<span>検索中...</span>
+					{:else}
+						<AddIcon />
+						<span>ISBN から自動入力</span>
+					{/if}
+				</button>
+			</div>
+
+			<div>
+				<label class="block text-sm font-medium mb-1" for="publishedDate">出版日</label>
+				<input
+					id="publishedDate"
+					bind:value={publishedDate}
+					placeholder="例: 2001-01-01"
+					class="w-full border rounded-lg px-3 py-2"
+				/>
+			</div>
 
 			<button
 				type="submit"
-				class="w-full py-3 px-4 rounded-xl bg-indigo-500/80 backdrop-blur-sm text-white font-medium hover:bg-indigo-600/80 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:ring-offset-2 transition-all flex items-center justify-center space-x-2"
+				class="w-full py-3 px-4 rounded-xl bg-indigo-500/80 text-white flex items-center justify-center gap-2"
 			>
 				<AddIcon />
 				<span>書籍を追加</span>
