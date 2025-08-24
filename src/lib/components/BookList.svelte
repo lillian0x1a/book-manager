@@ -8,13 +8,27 @@
 	import EditIcon from '$lib/components/icons/EditIcon.svelte';
 	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
 	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
+
 	$: statusColor = (status: Book['status']) =>
 		status === 'available' ? 'text-green-600' : 'text-red-600';
+
 	let selectedBook: Book | null = null;
 	let searchTerm = '';
 	let sortBy: 'title' | 'author' | 'publishedDate' = 'title';
 	let showEdit = false;
 	let showDetail = false;
+	let showSortDropdown = false;
+
+	// 並び替えオプション
+	const sortOptions = [
+		{ value: 'title', label: 'タイトル' },
+		{ value: 'author', label: '著者' },
+		{ value: 'publishedDate', label: '出版日' }
+	];
+
+	// 現在選択されている並び替えオプションのラベルを取得
+	$: selectedSortLabel = sortOptions.find((option) => option.value === sortBy)?.label || 'タイトル';
+
 	$: {
 		$filteredBooks = $booksStore.filter((book: Book) => {
 			const lowerSearchTerm = searchTerm.toLowerCase();
@@ -31,26 +45,58 @@
 			return (a[sortBy] ?? '').localeCompare(b[sortBy] ?? '');
 		});
 	}
+
 	function openModal(book: Book) {
 		selectedBook = { ...book };
 		showEdit = true;
 		showDetail = false;
 	}
+
 	function openDetail(book: Book) {
 		selectedBook = { ...book };
 		showDetail = true;
 		showEdit = false;
 	}
+
 	function closeModal() {
 		selectedBook = null;
 		showEdit = false;
 		showDetail = false;
 	}
+
 	function saveEdit() {
 		if (selectedBook) {
 			booksStore.updateBook(selectedBook);
 			closeModal();
 		}
+	}
+
+	// ドロップダウンの選択処理
+	function selectSortOption(value: 'title' | 'author' | 'publishedDate') {
+		sortBy = value;
+		showSortDropdown = false;
+	}
+
+	// ドロップダウン外をクリックしたときに閉じる処理
+	function handleOutsideClick(event: MouseEvent) {
+		const dropdownButton = document.getElementById('sort-dropdown-button');
+		const dropdownMenu = document.getElementById('sort-dropdown-menu');
+
+		if (
+			dropdownButton &&
+			dropdownMenu &&
+			!dropdownButton.contains(event.target as Node) &&
+			!dropdownMenu.contains(event.target as Node)
+		) {
+			showSortDropdown = false;
+		}
+	}
+
+	// ドロップダウン表示時は外側クリックイベントを追加
+	$: if (showSortDropdown) {
+		document.addEventListener('click', handleOutsideClick);
+	} else {
+		document.removeEventListener('click', handleOutsideClick);
 	}
 </script>
 
@@ -59,7 +105,7 @@
 >
 	<!-- 検索とフィルターセクション -->
 	<section
-		class="bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-lg p-6 mb-8"
+		class="bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-lg p-6 mb-8 relative z-10"
 	>
 		<div class="mb-6 relative">
 			<input
@@ -76,19 +122,35 @@
 			<div class="flex items-center space-x-4">
 				<span class="text-gray-700">並び替え:</span>
 				<div class="relative">
-					<select
-						class="appearance-none bg-white/40 backdrop-blur-sm border border-white/30 rounded-xl py-2 pl-4 pr-8 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition"
-						bind:value={sortBy}
+					<button
+						id="sort-dropdown-button"
+						class="flex items-center space-x-2 bg-white/40 backdrop-blur-sm border border-white/30 rounded-xl py-2 pl-4 pr-3 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 transition"
+						on:click|stopPropagation={() => (showSortDropdown = !showSortDropdown)}
 					>
-						<option value="title">タイトル</option>
-						<option value="author">著者</option>
-						<option value="publishedDate">出版日</option>
-					</select>
-					<div
-						class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-					>
-						<DropdownIcon />
-					</div>
+						<span>{selectedSortLabel}</span>
+						<div class="transform transition-transform {showSortDropdown ? 'rotate-180' : ''}">
+							<DropdownIcon />
+						</div>
+					</button>
+					{#if showSortDropdown}
+						<div
+							id="sort-dropdown-menu"
+							class="absolute left-0 top-full mt-1 w-48 bg-white/40 backdrop-blur-lg rounded-xl border border-white/20 shadow-lg z-[100] overflow-hidden"
+						>
+							{#each sortOptions as option (option.value)}
+								<button
+									class="w-full text-left px-4 py-3 hover:bg-white/30 transition-colors {sortBy ===
+									option.value
+										? 'bg-white/20 text-indigo-700'
+										: 'text-gray-700'}"
+									on:click|stopPropagation={() =>
+										selectSortOption(option.value as 'title' | 'author' | 'publishedDate')}
+								>
+									{option.label}
+								</button>
+							{/each}
+						</div>
+					{/if}
 				</div>
 			</div>
 			<div class="text-sm text-gray-600 bg-white/30 backdrop-blur-sm px-3 py-1.5 rounded-lg">
@@ -96,7 +158,6 @@
 			</div>
 		</div>
 	</section>
-
 	<!-- 書籍一覧 -->
 	<section>
 		{#if $filteredBooks.length === 0}
