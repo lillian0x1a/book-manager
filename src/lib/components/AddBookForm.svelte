@@ -60,9 +60,10 @@
 			<h2 class="text-xl font-medium text-gray-900">書籍を追加</h2>
 		</div>
 		<div class="space-y-1.5">
-			<label class="text-sm font-medium text-gray-700">ISBN</label>
+			<label for="isbn-input" class="text-sm font-medium text-gray-700">ISBN</label>
 			<div class="flex space-x-2">
 				<input
+					id="isbn-input"
 					bind:value={isbn}
 					placeholder="978-3-16-148410-0"
 					class="flex-1 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
@@ -90,8 +91,9 @@
 			</div>
 		{/if}
 		<div class="space-y-1.5">
-			<label class="text-sm font-medium text-gray-700">タイトル *</label>
+			<label for="title-input" class="text-sm font-medium text-gray-700">タイトル *</label>
 			<input
+				id="title-input"
 				bind:value={title}
 				placeholder="書籍のタイトル"
 				class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
@@ -99,8 +101,9 @@
 			/>
 		</div>
 		<div class="space-y-1.5">
-			<label class="text-sm font-medium text-gray-700">著者 *</label>
+			<label for="author-input" class="text-sm font-medium text-gray-700">著者 *</label>
 			<input
+				id="author-input"
 				bind:value={author}
 				placeholder="著者名"
 				class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
@@ -108,8 +111,9 @@
 			/>
 		</div>
 		<div class="space-y-1.5">
-			<label class="text-sm font-medium text-gray-700">出版日</label>
+			<label for="published-date-input" class="text-sm font-medium text-gray-700">出版日</label>
 			<input
+				id="published-date-input"
 				type="date"
 				bind:value={publishedDate}
 				class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
@@ -117,7 +121,7 @@
 		</div>
 		{#if imageLinks?.thumbnail}
 			<div class="space-y-1.5">
-				<label class="text-sm font-medium text-gray-700">カバー画像</label>
+				<div class="text-sm font-medium text-gray-700">カバー画像</div>
 				<div class="flex justify-center">
 					<img
 						src={imageLinks.thumbnail}
