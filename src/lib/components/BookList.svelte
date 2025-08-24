@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { booksStore, filteredBooks } from '$lib/stores/books';
+	import { books } from '$lib/stores/books';
 	import type { Book } from '$lib/types/book';
 	import BookIcon from '$lib/components/icons/BookIcon.svelte';
 	import SearchIcon from '$lib/components/icons/SearchIcon.svelte';
@@ -31,7 +31,7 @@
 	$: selectedSortLabel = sortOptions.find((option) => option.value === sortBy)?.label || 'タイトル';
 
 	$: {
-		$filteredBooks = $booksStore.filter((book: Book) => {
+		$books = $books.filter((book: Book) => {
 			const lowerSearchTerm = searchTerm.toLowerCase();
 			return (
 				book.title.toLowerCase().includes(lowerSearchTerm) ||
@@ -39,7 +39,7 @@
 				(book.isbn && book.isbn.includes(lowerSearchTerm))
 			);
 		});
-		$filteredBooks = [...$filteredBooks].sort((a, b) => {
+		$books = [...$books].sort((a, b) => {
 			if (sortBy === 'publishedDate') {
 				return (a.publishedDate ?? '').localeCompare(b.publishedDate ?? '');
 			}
@@ -67,7 +67,7 @@
 
 	function saveEdit() {
 		if (selectedBook) {
-			booksStore.updateBook(selectedBook);
+			books.updateBook(selectedBook.id, selectedBook);
 			closeModal();
 		}
 	}
@@ -160,13 +160,13 @@
 				</div>
 			</div>
 			<div class="text-sm text-gray-600 bg-white/30 backdrop-blur-sm px-3 py-1.5 rounded-lg">
-				{$filteredBooks.length} 冊の書籍
+				{$books.length} 冊の書籍
 			</div>
 		</div>
 	</section>
 	<!-- 書籍一覧 -->
 	<section>
-		{#if $filteredBooks.length === 0}
+		{#if $books.length === 0}
 			<div
 				class="text-center py-12 bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-lg"
 			>
@@ -176,7 +176,7 @@
 			</div>
 		{:else}
 			<div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-				{#each $filteredBooks as book (book.id)}
+				{#each $books as book (book.id)}
 					<div
 						class="bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:bg-white/40 p-5"
 					>
@@ -211,7 +211,7 @@
 						{/if}
 						<div class="mt-4 flex space-x-2">
 							<button
-								on:click={() => booksStore.toggleStatus(book.id)}
+								on:click={() => books.toggleStatus(book.id)}
 								class={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition backdrop-blur-sm ${book.status === 'available' ? 'bg-indigo-200/50 text-indigo-700 hover:bg-indigo-300/50' : 'bg-gray-200/50 text-gray-700 hover:bg-gray-300/50'}`}
 							>
 								{book.status === 'available' ? '貸出' : '返却'}
@@ -229,7 +229,7 @@
 								<EditIcon />
 							</button>
 							<button
-								on:click={() => booksStore.removeBook(book.id)}
+								on:click={() => books.remove(book.id)}
 								class="p-2 rounded-xl text-gray-600 hover:bg-red-200/50 hover:text-red-500 backdrop-blur-sm transition"
 							>
 								<DeleteIcon />

@@ -8,6 +8,12 @@ export interface Book {
 	isbn: string;
 	createdAt: string;
 	updatedAt: string;
+	status: 'available' | 'borrowed';
+	imageLinks?: {
+		thumbnail?: string;
+	};
+	// 以下を追加
+	publishedDate?: string;
 }
 
 /** 本を新規作成するときの入力 */

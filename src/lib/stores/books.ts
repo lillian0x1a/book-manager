@@ -9,6 +9,8 @@ function createBooksStore() {
 
 	return {
 		subscribe,
+		set,
+		update,
 
 		add(input: CreateBookInput): Book {
 			const book = createBookEntity(input);
@@ -26,6 +28,16 @@ function createBooksStore() {
 				bookRepository.saveBooks(updated);
 				return updated;
 			});
+		},
+
+		toggleStatus: (id: string): void => {
+			update((books) =>
+				books.map((book) =>
+					book.id === id
+						? { ...book, status: book.status === 'available' ? 'borrowed' : 'available' }
+						: book
+				)
+			);
 		},
 
 		updateBook(id: string, patch: UpdateBookInput): void {
