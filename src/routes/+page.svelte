@@ -7,6 +7,7 @@
 	import BookIcon from '$lib/components/icons/BookIcon.svelte';
 	import SettingsIcon from '$lib/components/icons/SettingsIcon.svelte';
 	import AddIcon from '$lib/components/icons/AddIcon.svelte';
+	import SyncIcon from '$lib/components/icons/SyncIcon.svelte';
 
 	let activeTab = 'bookList'; // 'bookList', 'addBook', 'backupRestore'
 	let isMobile = false;
@@ -82,18 +83,35 @@
 			<header
 				class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-0 z-10"
 			>
-				<h1 class="text-xl font-semibold text-gray-900">
-					{#if activeTab === 'bookList'}書籍一覧{/if}
-					{#if activeTab === 'addBook'}書籍を追加{/if}
-					{#if activeTab === 'backupRestore'}データ管理{/if}
-				</h1>
 				{#if activeTab === 'bookList'}
+					<div class="flex items-center mb-4">
+						<div class="bg-green-100 p-2 rounded-lg mr-3">
+							<BookIcon class="text-green-600" />
+						</div>
+						<h2 class="text-xl font-medium text-gray-900">書籍一覧</h2>
+					</div>
 					<button
 						class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white"
 						on:click={() => (activeTab = 'addBook')}
 					>
 						<AddIcon />
 					</button>
+				{/if}
+				{#if activeTab === 'addBook'}
+					<div class="flex items-center mb-4">
+						<div class="bg-blue-100 p-2 rounded-lg mr-3">
+							<AddIcon class="text-blue-600" />
+						</div>
+						<h2 class="text-xl font-medium text-gray-900">書籍を追加</h2>
+					</div>
+				{/if}
+				{#if activeTab === 'backupRestore'}
+					<div class="flex items-center mb-4">
+						<div class="bg-purple-100 p-2 rounded-lg mr-3">
+							<SyncIcon class="text-purple-600" />
+						</div>
+						<h2 class="text-xl font-medium text-gray-900">データ管理</h2>
+					</div>
 				{/if}
 			</header>
 		{/if}
@@ -102,12 +120,13 @@
 			<!-- macOS用ツールバー -->
 			{#if !isMobile}
 				<div class="mb-6 flex items-center justify-between">
-					<h1 class="text-2xl font-bold text-gray-900">
-						{#if activeTab === 'bookList'}書籍一覧{/if}
-						{#if activeTab === 'addBook'}書籍を追加{/if}
-						{#if activeTab === 'backupRestore'}データ管理{/if}
-					</h1>
 					{#if activeTab === 'bookList'}
+						<div class="flex items-center mb-4">
+							<div class="bg-green-100 p-2 rounded-lg mr-3">
+								<BookIcon class="text-green-600" />
+							</div>
+							<h2 class="text-xl font-medium text-gray-900">書籍一覧</h2>
+						</div>
 						<button
 							class="px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center space-x-2 hover:bg-blue-600 transition-colors"
 							on:click={() => (activeTab = 'addBook')}
@@ -116,19 +135,32 @@
 							<span>書籍を追加</span>
 						</button>
 					{/if}
+					{#if activeTab === 'addBook'}
+						<div class="flex items-center mb-4">
+							<div class="bg-blue-100 p-2 rounded-lg mr-3">
+								<AddIcon class="text-blue-600" />
+							</div>
+							<h2 class="text-xl font-medium text-gray-900">書籍を追加</h2>
+						</div>{/if}
+					{#if activeTab === 'backupRestore'}
+						<div class="flex items-center mb-4">
+							<div class="bg-purple-100 p-2 rounded-lg mr-3">
+								<SyncIcon class="text-purple-600" />
+							</div>
+							<h2 class="text-xl font-medium text-gray-900">データ管理</h2>
+						</div>
+					{/if}
 				</div>
 			{/if}
 
 			<!-- コンテンツエリア -->
-			<div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-				{#if activeTab === 'bookList'}
-					<BookList />
-				{:else if activeTab === 'addBook'}
-					<AddBookForm />
-				{:else if activeTab === 'backupRestore'}
-					<BackupRestore />
-				{/if}
-			</div>
+			{#if activeTab === 'bookList'}
+				<BookList />
+			{:else if activeTab === 'addBook'}
+				<AddBookForm />
+			{:else if activeTab === 'backupRestore'}
+				<BackupRestore />
+			{/if}
 		</div>
 	</main>
 

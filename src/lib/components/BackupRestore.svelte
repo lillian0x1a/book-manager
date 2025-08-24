@@ -85,88 +85,76 @@
 	}
 </script>
 
-<div class="bg-white rounded-2xl shadow-sm p-6 max-w-md mx-auto">
-	<div class="flex items-center mb-4">
-		<div class="bg-purple-100 p-2 rounded-lg mr-3">
-			<SyncIcon class="text-purple-600" />
-		</div>
-		<h2 class="text-xl font-medium text-gray-900">データ管理</h2>
-	</div>
-	<div class="space-y-5">
-		<div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
-			<h3 class="text-lg font-medium text-blue-800 mb-3">バックアップ</h3>
-			<p class="text-sm text-blue-600 mb-4">
-				現在の書籍データをJSONファイルとしてエクスポートします
-			</p>
-			<button
-				on:click={exportData}
-				disabled={isExporting}
-				class="w-full py-3 px-4 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 flex items-center justify-center"
-			>
-				{#if isExporting}
-					<SpinnerIcon class="mr-2 text-white" />
-					エクスポート中...
-				{:else}
-					<DownloadIcon class="mr-2" />
-					データをエクスポート
-				{/if}
-			</button>
-		</div>
-		<div class="bg-green-50 rounded-xl p-5 border border-green-100">
-			<h3 class="text-lg font-medium text-green-800 mb-3">復元</h3>
-			<p class="text-sm text-green-600 mb-4">JSONファイルから書籍データをインポートします</p>
-			<input
-				type="file"
-				accept=".json"
-				on:change={(e) => {
-					const target = e.target as HTMLInputElement | null;
-					selectedFile = target?.files?.[0] || null;
-					if (selectedFile) importData();
-				}}
-				class="hidden"
-				id="import-file"
-				disabled={isImporting}
-			/>
-			<label
-				for="import-file"
-				class="w-full py-3 px-4 rounded-lg bg-green-500 text-white font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 flex items-center justify-center cursor-pointer"
-			>
-				{#if isImporting}
-					<SpinnerIcon class="mr-2 text-white" />
-					インポート中...
-				{:else}
-					<UploadIcon class="mr-2" />
-					ファイルを選択してインポート
-				{/if}
-			</label>
-			{#if selectedFile && !isImporting}
-				<div class="mt-3 text-sm text-green-700 flex items-center">
-					<FileIcon class="mr-1.5" />
-					{selectedFile.name}
-				</div>
+<div class="bg-white rounded-2xl shadow-sm p-6 max-w-md mx-auto space-y-5">
+	<div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
+		<h3 class="text-lg font-medium text-blue-800 mb-3">バックアップ</h3>
+		<p class="text-sm text-blue-600 mb-4">現在の書籍データをJSONファイルとしてエクスポートします</p>
+		<button
+			on:click={exportData}
+			disabled={isExporting}
+			class="w-full py-3 px-4 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 flex items-center justify-center"
+		>
+			{#if isExporting}
+				<SpinnerIcon class="mr-2 text-white" />
+				エクスポート中...
+			{:else}
+				<DownloadIcon class="mr-2" />
+				データをエクスポート
 			{/if}
-		</div>
+		</button>
+	</div>
+	<div class="bg-green-50 rounded-xl p-5 border border-green-100">
+		<h3 class="text-lg font-medium text-green-800 mb-3">復元</h3>
+		<p class="text-sm text-green-600 mb-4">JSONファイルから書籍データをインポートします</p>
+		<input
+			type="file"
+			accept=".json"
+			on:change={(e) => {
+				const target = e.target as HTMLInputElement | null;
+				selectedFile = target?.files?.[0] || null;
+				if (selectedFile) importData();
+			}}
+			class="hidden"
+			id="import-file"
+			disabled={isImporting}
+		/>
+		<label
+			for="import-file"
+			class="w-full py-3 px-4 rounded-lg bg-green-500 text-white font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 flex items-center justify-center cursor-pointer"
+		>
+			{#if isImporting}
+				<SpinnerIcon class="mr-2 text-white" />
+				インポート中...
+			{:else}
+				<UploadIcon class="mr-2" />
+				ファイルを選択してインポート
+			{/if}
+		</label>
+		{#if selectedFile && !isImporting}
+			<div class="mt-3 text-sm text-green-700 flex items-center">
+				<FileIcon class="mr-1.5" />
+				{selectedFile.name}
+			</div>
+		{/if}
 	</div>
 </div>
 
 <!-- 通知コンポーネント -->
 {#if notification.show}
 	<div
-		class="fixed bottom-6 right-6 px-4 py-3 rounded-lg shadow-lg transform transition-transform duration-300 animate-fade-in-up"
+		class="fixed bottom-6 right-6 px-4 py-3 rounded-lg shadow-lg transform transition-transform duration-300 animate-fade-in-up flex items-center text-white"
 		class:bg-blue-500={notification.type === 'info'}
 		class:bg-green-500={notification.type === 'success'}
 		class:bg-red-500={notification.type === 'error'}
 	>
-		<div class="flex items-center text-white">
-			{#if notification.type === 'success'}
-				<CheckIcon class="mr-2" />
-			{:else if notification.type === 'error'}
-				<CloseIcon class="mr-2" />
-			{:else}
-				<InfoIcon class="mr-2" />
-			{/if}
-			<span>{notification.message}</span>
-		</div>
+		{#if notification.type === 'success'}
+			<CheckIcon class="mr-2" />
+		{:else if notification.type === 'error'}
+			<CloseIcon class="mr-2" />
+		{:else}
+			<InfoIcon class="mr-2" />
+		{/if}
+		<span>{notification.message}</span>
 	</div>
 {/if}
 

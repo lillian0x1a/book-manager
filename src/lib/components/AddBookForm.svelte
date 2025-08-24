@@ -53,12 +53,6 @@
 
 <div class="bg-white rounded-2xl shadow-sm p-6 max-w-md mx-auto">
 	<form class="space-y-5" on:submit|preventDefault={handleSubmit}>
-		<div class="flex items-center mb-4">
-			<div class="bg-blue-100 p-2 rounded-lg mr-3">
-				<AddIcon class="text-blue-600" />
-			</div>
-			<h2 class="text-xl font-medium text-gray-900">書籍を追加</h2>
-		</div>
 		<div class="space-y-1.5">
 			<label for="isbn-input" class="text-sm font-medium text-gray-700">ISBN</label>
 			<div class="flex space-x-2">
