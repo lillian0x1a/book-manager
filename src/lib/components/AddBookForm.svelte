@@ -4,6 +4,7 @@
 	// SVGアイコンコンポーネントをインポート
 	import AddIcon from '$lib/components/icons/AddIcon.svelte';
 	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
+	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
 	import { onMount } from 'svelte';
 
 	let title = '';
@@ -14,6 +15,12 @@
 	let errorMessage = '';
 	let imageLinks = { thumbnail: '' };
 
+	// バリデーションエラー
+	let validationErrors = {
+		title: '',
+		author: ''
+	};
+
 	// コンポーネントがマウントされたときにスクロールを無効化
 	onMount(() => {
 		// bodyのスクロールを無効化
@@ -21,20 +28,17 @@
 		document.body.style.position = 'fixed';
 		document.body.style.width = '100%';
 		document.body.style.height = '100%';
-
 		// htmlのスクロールを無効化
 		document.documentElement.style.overflow = 'hidden';
 		document.documentElement.style.position = 'fixed';
 		document.documentElement.style.width = '100%';
 		document.documentElement.style.height = '100%';
-
 		// クリーンアップ関数
 		return () => {
 			document.body.style.overflow = '';
 			document.body.style.position = '';
 			document.body.style.width = '';
 			document.body.style.height = '';
-
 			document.documentElement.style.overflow = '';
 			document.documentElement.style.position = '';
 			document.documentElement.style.width = '';
@@ -57,12 +61,43 @@
 			publishedDate = bookData.publishedDate || '';
 			imageLinks = bookData.imageLinks || { thumbnail: '' };
 			errorMessage = '';
+			// 検索成功時にバリデーションエラーをクリア
+			validationErrors.title = '';
+			validationErrors.author = '';
 		} else {
 			errorMessage = '指定されたISBNの書籍が見つかりませんでした。';
 		}
 	}
 
+	// フォームバリデーション
+	function validateForm() {
+		let isValid = true;
+
+		// タイトルのバリデーション
+		if (!title.trim()) {
+			validationErrors.title = 'タイトルは必須項目です';
+			isValid = false;
+		} else {
+			validationErrors.title = '';
+		}
+
+		// 著者のバリデーション
+		if (!author.trim()) {
+			validationErrors.author = '著者は必須項目です';
+			isValid = false;
+		} else {
+			validationErrors.author = '';
+		}
+
+		return isValid;
+	}
+
 	const handleSubmit = () => {
+		// バリデーションを実行
+		if (!validateForm()) {
+			return;
+		}
+
 		if (title && author) {
 			booksStore.addBook({
 				title,
@@ -76,6 +111,9 @@
 			isbn = '';
 			publishedDate = '';
 			imageLinks = { thumbnail: '' };
+			// フォーム送信後にバリデーションエラーをクリア
+			validationErrors.title = '';
+			validationErrors.author = '';
 		}
 	};
 </script>
@@ -131,31 +169,59 @@
 					</button>
 				</div>
 			</div>
+
 			{#if errorMessage}
 				<div class="mt-2 p-3 bg-red-200/50 backdrop-blur-sm rounded-xl border border-red-200/50">
 					<p class="text-sm text-red-700">{errorMessage}</p>
 				</div>
 			{/if}
+
 			<div class="space-y-1.5">
 				<label for="title-input" class="text-sm font-medium text-gray-700">タイトル *</label>
 				<input
 					id="title-input"
 					bind:value={title}
 					placeholder="書籍のタイトル"
-					class="w-full px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition"
-					required
+					class="w-full px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition {validationErrors.title
+						? 'border-red-400/50'
+						: ''}"
+					on:input={() => (validationErrors.title = '')}
 				/>
+				{#if validationErrors.title}
+					<div
+						class="mt-1.5 p-2 bg-red-200/50 backdrop-blur-sm rounded-lg border border-red-200/50"
+					>
+						<p class="text-xs text-red-700 flex items-center">
+							<CloseIcon class="mr-1.5 text-xs" />
+							{validationErrors.title}
+						</p>
+					</div>
+				{/if}
 			</div>
+
 			<div class="space-y-1.5">
 				<label for="author-input" class="text-sm font-medium text-gray-700">著者 *</label>
 				<input
 					id="author-input"
 					bind:value={author}
 					placeholder="著者名"
-					class="w-full px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition"
-					required
+					class="w-full px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition {validationErrors.author
+						? 'border-red-400/50'
+						: ''}"
+					on:input={() => (validationErrors.author = '')}
 				/>
+				{#if validationErrors.author}
+					<div
+						class="mt-1.5 p-2 bg-red-200/50 backdrop-blur-sm rounded-lg border border-red-200/50"
+					>
+						<p class="text-xs text-red-700 flex items-center">
+							<CloseIcon class="mr-1.5 text-xs" />
+							{validationErrors.author}
+						</p>
+					</div>
+				{/if}
 			</div>
+
 			<div class="space-y-1.5">
 				<label for="published-date-input" class="text-sm font-medium text-gray-700">出版日</label>
 				<input
@@ -165,6 +231,7 @@
 					class="w-full px-4 py-3 bg-white/40 backdrop-blur-sm rounded-xl border border-white/30 focus:ring-2 focus:ring-indigo-400/50 focus:border-indigo-400/50 focus:outline-none transition"
 				/>
 			</div>
+
 			{#if imageLinks?.thumbnail}
 				<div class="space-y-1.5">
 					<div class="text-sm font-medium text-gray-700">カバー画像</div>
@@ -177,6 +244,7 @@
 					</div>
 				</div>
 			{/if}
+
 			<button
 				type="submit"
 				class="w-full py-3 px-4 rounded-xl bg-indigo-500/80 backdrop-blur-sm text-white font-medium hover:bg-indigo-600/80 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 focus:ring-offset-2 transition-all flex items-center justify-center space-x-2"
