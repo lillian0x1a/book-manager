@@ -175,7 +175,7 @@
 				class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all {activeTab ===
 				'bookList'
 					? 'bg-white/40 text-indigo-600 shadow-md active-tab'
-					: 'text-gray-600 hover:bg-white/20'}"
+					: 'text-gray-700 hover:bg-white/20'}"
 				on:click={() => (activeTab = 'bookList')}
 			>
 				<BookIcon class="text-2xl" />
@@ -185,7 +185,7 @@
 				class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all {activeTab ===
 				'addBook'
 					? 'bg-white/40 text-indigo-600 shadow-md active-tab'
-					: 'text-gray-600 hover:bg-white/20'}"
+					: 'text-gray-700 hover:bg-white/20'}"
 				on:click={() => (activeTab = 'addBook')}
 			>
 				<AddIcon class="text-2xl" />
@@ -195,7 +195,7 @@
 				class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all {activeTab ===
 				'backupRestore'
 					? 'bg-white/40 text-indigo-600 shadow-md active-tab'
-					: 'text-gray-600 hover:bg-white/20'}"
+					: 'text-gray-700 hover:bg-white/20'}"
 				on:click={() => (activeTab = 'backupRestore')}
 			>
 				<SettingsIcon class="text-2xl" />
@@ -261,10 +261,5 @@
 		box-shadow:
 			0 10px 15px -3px rgba(0, 0, 0, 0.1),
 			0 4px 6px -2px rgba(0, 0, 0, 0.05);
-	}
-	.shadow-xl {
-		box-shadow:
-			0 20px 25px -5px rgba(0, 0, 0, 0.1),
-			0 10px 10px -5px rgba(0, 0, 0, 0.04);
 	}
 </style>
