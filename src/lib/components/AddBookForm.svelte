@@ -1,14 +1,13 @@
 <script lang="ts">
 	import { booksStore } from '$lib/stores/books';
 	import { fetchBookByISBN } from '$lib/utils/bookApi';
-
 	let title = '';
 	let author = '';
 	let isbn = '';
 	let publishedDate = '';
-	let isLoading = false; // ローディング状態
-	let errorMessage = ''; // エラーメッセージ
-	let imageLinks = { thumbnail: '' }; // 追加: サムネイル画像リンク
+	let isLoading = false;
+	let errorMessage = '';
+	let imageLinks = { thumbnail: '' };
 
 	async function searchByISBN() {
 		if (!isbn) {
@@ -19,13 +18,12 @@
 		errorMessage = '';
 		const bookData = await fetchBookByISBN(isbn);
 		isLoading = false;
-
 		if (bookData) {
 			title = bookData.title || '';
 			author = bookData.authors || '';
 			publishedDate = bookData.publishedDate || '';
-			imageLinks = bookData.imageLinks || { thumbnail: '' }; // 追加: 画像リンクの取得
-			errorMessage = ''; // 成功時エラーメッセージクリア
+			imageLinks = bookData.imageLinks || { thumbnail: '' };
+			errorMessage = '';
 		} else {
 			errorMessage = '指定されたISBNの書籍が見つかりませんでした。';
 		}
@@ -40,7 +38,6 @@
 				publishedDate: publishedDate || undefined,
 				imageLinks: imageLinks?.thumbnail ? { thumbnail: imageLinks.thumbnail } : undefined
 			});
-
 			title = '';
 			author = '';
 			isbn = '';
@@ -50,46 +47,108 @@
 	};
 </script>
 
-<form class="space-y-4" on:submit|preventDefault={handleSubmit}>
-	<div class="flex items-center space-x-2">
-		<input
-			bind:value={isbn}
-			placeholder="ISBN"
-			class="px-3 py-2 border rounded w-full"
-			on:change={searchByISBN}
-		/>
+<div class="bg-white rounded-2xl shadow-sm p-6 max-w-md mx-auto">
+	<form class="space-y-5" on:submit|preventDefault={handleSubmit}>
+		<h2 class="text-2xl font-semibold text-gray-900">書籍を追加</h2>
+
+		<div class="space-y-1.5">
+			<label class="text-sm font-medium text-gray-700">ISBN</label>
+			<div class="flex space-x-2">
+				<input
+					bind:value={isbn}
+					placeholder="978-3-16-148410-0"
+					class="flex-1 px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
+					on:change={searchByISBN}
+				/>
+				<button
+					on:click|preventDefault={searchByISBN}
+					class="px-5 py-3 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+					disabled={isLoading}
+				>
+					{#if isLoading}
+						<div class="flex items-center justify-center">
+							<svg
+								class="animate-spin h-5 w-5 mr-2 text-white"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+							>
+								<circle
+									class="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									stroke-width="4"
+								></circle>
+								<path
+									class="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+								></path>
+							</svg>
+							検索中
+						</div>
+					{:else}
+						検索
+					{/if}
+				</button>
+			</div>
+		</div>
+
+		{#if errorMessage}
+			<div class="mt-2 p-3 bg-red-50 rounded-lg">
+				<p class="text-sm text-red-600">{errorMessage}</p>
+			</div>
+		{/if}
+
+		<div class="space-y-1.5">
+			<label class="text-sm font-medium text-gray-700">タイトル *</label>
+			<input
+				bind:value={title}
+				placeholder="書籍のタイトル"
+				class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
+				required
+			/>
+		</div>
+
+		<div class="space-y-1.5">
+			<label class="text-sm font-medium text-gray-700">著者 *</label>
+			<input
+				bind:value={author}
+				placeholder="著者名"
+				class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
+				required
+			/>
+		</div>
+
+		<div class="space-y-1.5">
+			<label class="text-sm font-medium text-gray-700">出版日</label>
+			<input
+				type="date"
+				bind:value={publishedDate}
+				class="w-full px-4 py-3 bg-gray-50 rounded-lg border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition"
+			/>
+		</div>
+
+		{#if imageLinks?.thumbnail}
+			<div class="space-y-1.5">
+				<label class="text-sm font-medium text-gray-700">カバー画像</label>
+				<div class="flex justify-center">
+					<img
+						src={imageLinks.thumbnail}
+						alt="カバー画像"
+						class="h-48 object-contain rounded-lg shadow-sm"
+					/>
+				</div>
+			</div>
+		{/if}
+
 		<button
-			on:click|preventDefault={searchByISBN}
-			class="px-4 py-2 rounded text-white bg-gray-500 hover:bg-gray-600"
-			disabled={isLoading}
+			type="submit"
+			class="w-full py-3 px-4 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
 		>
-			{#if isLoading}検索中...{:else}検索{/if}
+			書籍を追加
 		</button>
-	</div>
-	{#if errorMessage}
-		<p class="text-red-500 text-sm">{errorMessage}</p>
-	{/if}
-	<input
-		bind:value={title}
-		placeholder="タイトル*"
-		class="px-3 py-2 border rounded w-full"
-		required
-	/>
-	<input bind:value={author} placeholder="著者*" class="px-3 py-2 border rounded w-full" required />
-	<input
-		type="date"
-		bind:value={publishedDate}
-		placeholder="出版日"
-		class="px-3 py-2 border rounded w-full"
-	/>
-	<button type="submit" class="px-4 py-2 rounded text-white bg-blue-500 hover:bg-blue-600 w-full"
-		>追加</button
-	>
-	{#if imageLinks?.thumbnail}
-		<img
-			src={imageLinks.thumbnail}
-			alt="カバー画像"
-			class="w-32 h-48 object-cover rounded-md shadow-md mb-2"
-		/>
-	{/if}
-</form>
+	</form>
+</div>
