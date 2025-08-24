@@ -8,6 +8,7 @@
 	import EditIcon from '$lib/components/icons/EditIcon.svelte';
 	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
 	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
+	import { onMount } from 'svelte';
 
 	$: statusColor = (status: Book['status']) =>
 		status === 'available' ? 'text-green-600' : 'text-red-600';
@@ -94,9 +95,14 @@
 
 	// ドロップダウン表示時は外側クリックイベントを追加
 	$: if (showSortDropdown) {
-		document.addEventListener('click', handleOutsideClick);
+		// クライアントサイドでのみ実行されるようにチェック
+		if (typeof document !== 'undefined') {
+			document.addEventListener('click', handleOutsideClick);
+		}
 	} else {
-		document.removeEventListener('click', handleOutsideClick);
+		if (typeof document !== 'undefined') {
+			document.removeEventListener('click', handleOutsideClick);
+		}
 	}
 </script>
 
