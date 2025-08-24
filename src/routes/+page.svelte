@@ -3,6 +3,10 @@
 	import BookList from '$lib/components/BookList.svelte';
 	import AddBookForm from '$lib/components/AddBookForm.svelte';
 	import BackupRestore from '$lib/components/BackupRestore.svelte';
+	// SVGアイコンコンポーネントをインポート
+	import BookIcon from '$lib/components/icons/BookIcon.svelte';
+	import SettingsIcon from '$lib/components/icons/SettingsIcon.svelte';
+	import AddIcon from '$lib/components/icons/AddIcon.svelte';
 
 	let activeTab = 'bookList'; // 'bookList', 'addBook', 'backupRestore'
 	let isMobile = false;
@@ -15,7 +19,6 @@
 	onMount(() => {
 		checkScreenSize();
 		window.addEventListener('resize', checkScreenSize);
-
 		return () => {
 			window.removeEventListener('resize', checkScreenSize);
 		};
@@ -39,7 +42,7 @@
 								: 'text-gray-700 hover:bg-gray-200'}"
 							on:click={() => (activeTab = 'bookList')}
 						>
-							<span class="material-icons">menu_book</span>
+							<BookIcon />
 							<span>書籍一覧</span>
 						</button>
 					</li>
@@ -51,7 +54,7 @@
 								: 'text-gray-700 hover:bg-gray-200'}"
 							on:click={() => (activeTab = 'addBook')}
 						>
-							<span class="material-icons">add_box</span>
+							<AddIcon />
 							<span>書籍を追加</span>
 						</button>
 					</li>
@@ -63,7 +66,7 @@
 								: 'text-gray-700 hover:bg-gray-200'}"
 							on:click={() => (activeTab = 'backupRestore')}
 						>
-							<span class="material-icons">settings</span>
+							<SettingsIcon />
 							<span>データ管理</span>
 						</button>
 					</li>
@@ -89,7 +92,7 @@
 						class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white"
 						on:click={() => (activeTab = 'addBook')}
 					>
-						<span class="material-icons">add</span>
+						<AddIcon />
 					</button>
 				{/if}
 			</header>
@@ -109,7 +112,7 @@
 							class="px-4 py-2 bg-blue-500 text-white rounded-lg flex items-center space-x-2 hover:bg-blue-600 transition-colors"
 							on:click={() => (activeTab = 'addBook')}
 						>
-							<span class="material-icons">add</span>
+							<AddIcon />
 							<span>書籍を追加</span>
 						</button>
 					{/if}
@@ -141,10 +144,9 @@
 					: 'text-gray-500'}"
 				on:click={() => (activeTab = 'bookList')}
 			>
-				<span class="material-icons text-2xl">menu_book</span>
+				<BookIcon class="text-2xl" />
 				<span class="text-xs mt-1">一覧</span>
 			</button>
-
 			<button
 				class="flex flex-col items-center justify-center w-16 h-16 rounded-xl transition-colors {activeTab ===
 				'addBook'
@@ -152,10 +154,9 @@
 					: 'text-gray-500'}"
 				on:click={() => (activeTab = 'addBook')}
 			>
-				<span class="material-icons text-2xl">add_box</span>
+				<AddIcon class="text-2xl" />
 				<span class="text-xs mt-1">追加</span>
 			</button>
-
 			<button
 				class="flex flex-col items-center justify-center w-16 h-16 rounded-xl transition-colors {activeTab ===
 				'backupRestore'
@@ -163,7 +164,7 @@
 					: 'text-gray-500'}"
 				on:click={() => (activeTab = 'backupRestore')}
 			>
-				<span class="material-icons text-2xl">settings</span>
+				<SettingsIcon class="text-2xl" />
 				<span class="text-xs mt-1">設定</span>
 			</button>
 		</nav>
@@ -171,9 +172,6 @@
 </div>
 
 <style>
-	/* Material Iconsのフォント読み込み */
-	@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-
 	/* Appleのシステムフォントを優先 */
 	body {
 		font-family:
@@ -197,7 +195,6 @@
 		nav button {
 			position: relative;
 		}
-
 		nav button::after {
 			content: '';
 			position: absolute;
@@ -211,7 +208,6 @@
 			opacity: 0;
 			transition: opacity 0.2s ease;
 		}
-
 		nav button.active-tab::after {
 			opacity: 1;
 		}

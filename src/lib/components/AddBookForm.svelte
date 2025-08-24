@@ -2,7 +2,7 @@
 	import { booksStore } from '$lib/stores/books';
 	import { fetchBookByISBN } from '$lib/utils/bookApi';
 	// SVGアイコンコンポーネントをインポート
-	import PlusIcon from '$lib/components/icons/PlusIcon.svelte';
+	import AddIcon from '$lib/components/icons/AddIcon.svelte';
 	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
 
 	let title = '';
@@ -55,7 +55,7 @@
 	<form class="space-y-5" on:submit|preventDefault={handleSubmit}>
 		<div class="flex items-center mb-4">
 			<div class="bg-blue-100 p-2 rounded-lg mr-3">
-				<PlusIcon class="text-blue-600" />
+				<AddIcon class="text-blue-600" />
 			</div>
 			<h2 class="text-xl font-medium text-gray-900">書籍を追加</h2>
 		</div>

@@ -8,7 +8,7 @@
 	import UploadIcon from '$lib/components/icons/UploadIcon.svelte';
 	import FileIcon from '$lib/components/icons/FileIcon.svelte';
 	import CheckIcon from '$lib/components/icons/CheckIcon.svelte';
-	import XIcon from '$lib/components/icons/XIcon.svelte';
+	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
 	import InfoIcon from '$lib/components/icons/InfoIcon.svelte';
 
 	let selectedFile: File | null = null;
@@ -161,7 +161,7 @@
 			{#if notification.type === 'success'}
 				<CheckIcon class="mr-2" />
 			{:else if notification.type === 'error'}
-				<XIcon class="mr-2" />
+				<CloseIcon class="mr-2" />
 			{:else}
 				<InfoIcon class="mr-2" />
 			{/if}

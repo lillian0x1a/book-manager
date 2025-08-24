@@ -5,13 +5,10 @@
 	import BookIcon from '$lib/components/icons/BookIcon.svelte';
 	import SearchIcon from '$lib/components/icons/SearchIcon.svelte';
 	import DropdownIcon from '$lib/components/icons/DropdownIcon.svelte';
-	import LargeBookIcon from '$lib/components/icons/LargeBookIcon.svelte';
 	import InfoIcon from '$lib/components/icons/InfoIcon.svelte';
 	import EditIcon from '$lib/components/icons/EditIcon.svelte';
 	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
 	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
-	import MediumBookIcon from '$lib/components/icons/MediumBookIcon.svelte';
-	import LargeBookIconForDetail from '$lib/components/icons/LargeBookIconForDetail.svelte';
 
 	$: statusColor = (status: Book['status']) =>
 		status === 'available' ? 'text-green-600' : 'text-red-600';
@@ -112,7 +109,7 @@
 		<section>
 			{#if $filteredBooks.length === 0}
 				<div class="text-center py-12">
-					<LargeBookIcon class="mx-auto text-gray-300 mb-4" />
+					<BookIcon class="mx-auto text-gray-300 mb-4" />
 					<h3 class="text-lg font-medium text-gray-900 mb-1">書籍が見つかりません</h3>
 					<p class="text-gray-500">検索条件を変更するか、新しい書籍を追加してください</p>
 				</div>
@@ -134,7 +131,7 @@
 										<div
 											class="w-16 h-24 bg-gray-100 rounded-lg flex items-center justify-center mr-4"
 										>
-											<MediumBookIcon class="text-gray-400" />
+											<BookIcon class="text-gray-400" />
 										</div>
 									{/if}
 									<div class="flex-1 min-w-0">
@@ -285,7 +282,7 @@
 							/>
 						{:else}
 							<div class="w-20 h-28 bg-gray-100 rounded-lg flex items-center justify-center mr-4">
-								<LargeBookIconForDetail class="text-gray-400" />
+								<BookIcon class="text-gray-400" />
 							</div>
 						{/if}
 						<div class="flex-1">
