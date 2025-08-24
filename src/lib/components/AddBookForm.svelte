@@ -49,7 +49,25 @@
 
 <div class="bg-white rounded-2xl shadow-sm p-6 max-w-md mx-auto">
 	<form class="space-y-5" on:submit|preventDefault={handleSubmit}>
-		<h2 class="text-2xl font-semibold text-gray-900">書籍を追加</h2>
+		<div class="flex items-center mb-4">
+			<div class="bg-blue-100 p-2 rounded-lg mr-3">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					class="h-6 w-6 text-blue-600"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke="currentColor"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+					/>
+				</svg>
+			</div>
+			<h2 class="text-xl font-medium text-gray-900">書籍を追加</h2>
+		</div>
 
 		<div class="space-y-1.5">
 			<label class="text-sm font-medium text-gray-700">ISBN</label>

@@ -79,7 +79,25 @@
 </script>
 
 <div class="bg-white rounded-2xl shadow-sm p-6 max-w-md mx-auto">
-	<h2 class="text-2xl font-semibold text-gray-900 mb-6">データ管理</h2>
+	<div class="flex items-center mb-4">
+		<div class="bg-purple-100 p-2 rounded-lg mr-3">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				class="h-6 w-6 text-purple-600"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke="currentColor"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					stroke-width="2"
+					d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+				/>
+			</svg>
+		</div>
+		<h2 class="text-xl font-medium text-gray-900">データ管理</h2>
+	</div>
 
 	<div class="space-y-5">
 		<div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
