@@ -1,6 +1,16 @@
 <!-- src/lib/components/BackupRestore.svelte -->
 <script lang="ts">
 	import { booksStore } from '$lib/stores/books';
+	// SVGアイコンコンポーネントをインポート
+	import SyncIcon from '$lib/components/icons/SyncIcon.svelte';
+	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
+	import DownloadIcon from '$lib/components/icons/DownloadIcon.svelte';
+	import UploadIcon from '$lib/components/icons/UploadIcon.svelte';
+	import FileIcon from '$lib/components/icons/FileIcon.svelte';
+	import CheckIcon from '$lib/components/icons/CheckIcon.svelte';
+	import XIcon from '$lib/components/icons/XIcon.svelte';
+	import InfoIcon from '$lib/components/icons/InfoIcon.svelte';
+
 	let selectedFile: File | null = null;
 	let isExporting = false;
 	let isImporting = false;
@@ -16,7 +26,6 @@
 			a.download = 'books_backup.json';
 			a.click();
 			URL.revokeObjectURL(url);
-
 			// エクスポート成功フィードバック
 			showNotification('バックアップが正常に作成されました', 'success');
 		} catch (error) {
@@ -28,7 +37,6 @@
 
 	async function importData() {
 		if (!selectedFile) return;
-
 		isImporting = true;
 		// ファイル読み込み
 		const reader = new FileReader();
@@ -70,7 +78,6 @@
 			message,
 			type
 		};
-
 		// 3秒後に通知を非表示
 		setTimeout(() => {
 			notification.show = false;
@@ -81,24 +88,10 @@
 <div class="bg-white rounded-2xl shadow-sm p-6 max-w-md mx-auto">
 	<div class="flex items-center mb-4">
 		<div class="bg-purple-100 p-2 rounded-lg mr-3">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				class="h-6 w-6 text-purple-600"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke="currentColor"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					stroke-width="2"
-					d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
-				/>
-			</svg>
+			<SyncIcon class="text-purple-600" />
 		</div>
 		<h2 class="text-xl font-medium text-gray-900">データ管理</h2>
 	</div>
-
 	<div class="space-y-5">
 		<div class="bg-blue-50 rounded-xl p-5 border border-blue-100">
 			<h3 class="text-lg font-medium text-blue-800 mb-3">バックアップ</h3>
@@ -111,45 +104,17 @@
 				class="w-full py-3 px-4 rounded-lg bg-blue-500 text-white font-medium hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 flex items-center justify-center"
 			>
 				{#if isExporting}
-					<svg
-						class="animate-spin h-5 w-5 mr-2 text-white"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-					>
-						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
-						></circle>
-						<path
-							class="opacity-75"
-							fill="currentColor"
-							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-						></path>
-					</svg>
+					<SpinnerIcon class="mr-2 text-white" />
 					エクスポート中...
 				{:else}
-					<svg
-						class="w-5 h-5 mr-2"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-						></path>
-					</svg>
+					<DownloadIcon class="mr-2" />
 					データをエクスポート
 				{/if}
 			</button>
 		</div>
-
 		<div class="bg-green-50 rounded-xl p-5 border border-green-100">
 			<h3 class="text-lg font-medium text-green-800 mb-3">復元</h3>
 			<p class="text-sm text-green-600 mb-4">JSONファイルから書籍データをインポートします</p>
-
 			<input
 				type="file"
 				accept=".json"
@@ -162,62 +127,21 @@
 				id="import-file"
 				disabled={isImporting}
 			/>
-
 			<label
 				for="import-file"
 				class="w-full py-3 px-4 rounded-lg bg-green-500 text-white font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors disabled:opacity-50 flex items-center justify-center cursor-pointer"
 			>
 				{#if isImporting}
-					<svg
-						class="animate-spin h-5 w-5 mr-2 text-white"
-						xmlns="http://www.w3.org/2000/svg"
-						fill="none"
-						viewBox="0 0 24 24"
-					>
-						<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"
-						></circle>
-						<path
-							class="opacity-75"
-							fill="currentColor"
-							d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-						></path>
-					</svg>
+					<SpinnerIcon class="mr-2 text-white" />
 					インポート中...
 				{:else}
-					<svg
-						class="w-5 h-5 mr-2"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-						></path>
-					</svg>
+					<UploadIcon class="mr-2" />
 					ファイルを選択してインポート
 				{/if}
 			</label>
-
 			{#if selectedFile && !isImporting}
 				<div class="mt-3 text-sm text-green-700 flex items-center">
-					<svg
-						class="w-4 h-4 mr-1.5"
-						fill="none"
-						stroke="currentColor"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-						></path>
-					</svg>
+					<FileIcon class="mr-1.5" />
 					{selectedFile.name}
 				</div>
 			{/if}
@@ -235,46 +159,11 @@
 	>
 		<div class="flex items-center text-white">
 			{#if notification.type === 'success'}
-				<svg
-					class="w-5 h-5 mr-2"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"
-					></path>
-				</svg>
+				<CheckIcon class="mr-2" />
 			{:else if notification.type === 'error'}
-				<svg
-					class="w-5 h-5 mr-2"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M6 18L18 6M6 6l12 12"
-					></path>
-				</svg>
+				<XIcon class="mr-2" />
 			{:else}
-				<svg
-					class="w-5 h-5 mr-2"
-					fill="none"
-					stroke="currentColor"
-					viewBox="0 0 24 24"
-					xmlns="http://www.w3.org/2000/svg"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
-						d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-					></path>
-				</svg>
+				<InfoIcon class="mr-2" />
 			{/if}
 			<span>{notification.message}</span>
 		</div>
@@ -292,7 +181,6 @@
 			transform: translateY(0);
 		}
 	}
-
 	.animate-fade-in-up {
 		animation: fadeInUp 0.3s ease-out forwards;
 	}
