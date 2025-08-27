@@ -8,7 +8,6 @@ export interface Book {
 	isbn: string;
 	createdAt: string;
 	updatedAt: string;
-	status: 'available' | 'borrowed';
 	imageLinks?: {
 		thumbnail?: string;
 	};

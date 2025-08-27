@@ -30,16 +30,6 @@ function createBooksStore() {
 			});
 		},
 
-		toggleStatus: (id: string): void => {
-			update((books) =>
-				books.map((book) =>
-					book.id === id
-						? { ...book, status: book.status === 'available' ? 'borrowed' : 'available' }
-						: book
-				)
-			);
-		},
-
 		updateBook(id: string, patch: UpdateBookInput): void {
 			update((books) => {
 				const updated = books.map((b) => (b.id === id ? updateBookEntity(b, patch) : b));

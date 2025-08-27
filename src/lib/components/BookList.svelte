@@ -8,9 +8,6 @@
 	import EditIcon from '$lib/components/icons/EditIcon.svelte';
 	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
 	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
-	import { onMount } from 'svelte';
-	$: statusColor = (status: Book['status']) =>
-		status === 'available' ? 'text-green-600' : 'text-red-600';
 	let selectedBook: Book | null = null;
 	let searchTerm = '';
 	let sortBy: 'title' | 'author' | 'publishedDate' = 'title';
@@ -188,25 +185,12 @@
 							<div class="flex-1 min-w-0">
 								<h3 class="font-medium text-gray-800 truncate">{book.title}</h3>
 								<p class="text-sm text-gray-600 truncate mt-1">{book.author}</p>
-								<div class="mt-2 flex items-center">
-									<span
-										class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm ${book.status === 'available' ? 'bg-green-200/50 text-green-800' : 'bg-red-200/50 text-red-800'}`}
-									>
-										{book.status === 'available' ? '利用可能' : '貸出中'}
-									</span>
-								</div>
 							</div>
 						</div>
 						{#if book.isbn}
 							<p class="text-xs text-gray-600 mt-3">ISBN: {book.isbn}</p>
 						{/if}
 						<div class="mt-4 flex space-x-2">
-							<button
-								on:click={() => books.toggleStatus(book.id)}
-								class={`flex-1 py-2 px-3 rounded-xl text-sm font-medium transition backdrop-blur-sm ${book.status === 'available' ? 'bg-indigo-200/50 text-indigo-700 hover:bg-indigo-300/50' : 'bg-gray-200/50 text-gray-700 hover:bg-gray-300/50'}`}
-							>
-								{book.status === 'available' ? '貸出' : '返却'}
-							</button>
 							<button
 								on:click={() => openDetail(book)}
 								class="p-2 rounded-xl text-gray-600 hover:bg-white/30 backdrop-blur-sm transition"
@@ -342,13 +326,6 @@
 					<div class="flex-1">
 						<h3 class="text-lg font-medium text-gray-800">{selectedBook.title}</h3>
 						<p class="text-gray-600 mt-1">{selectedBook.author}</p>
-						<div class="mt-3">
-							<span
-								class={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium backdrop-blur-sm ${selectedBook.status === 'available' ? 'bg-green-200/50 text-green-800' : 'bg-red-200/50 text-red-800'}`}
-							>
-								{selectedBook.status === 'available' ? '利用可能' : '貸出中'}
-							</span>
-						</div>
 					</div>
 				</div>
 				<div class="space-y-3 pt-2">
