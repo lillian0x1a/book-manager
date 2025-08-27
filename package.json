@@ -26,6 +26,7 @@
 		"@unocss/preset-uno": "^66.4.2",
 		"@unocss/vite": "^66.4.2",
 		"bits-ui": "^2.8.6",
+		"bun-types": "^1.2.21",
 		"clsx": "^2.1.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.3.3",
@@ -40,11 +41,8 @@
 	},
 	"dependencies": {
 		"@unocss/svelte-scoped": "^66.4.2",
-		"autoprefixer": "^10.4.21",
 		"mode-watcher": "^1.1.0",
-		"postcss": "^8.5.6",
 		"svelte-persisted-store": "^0.12.0",
-		"tailwindcss": "^4.1.12",
 		"uuid": "^11.1.0"
 	}
 }
