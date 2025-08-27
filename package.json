@@ -24,7 +24,7 @@
 		"@unocss/preset-attributify": "^66.4.2",
 		"@unocss/preset-icons": "^66.4.2",
 		"@unocss/preset-uno": "^66.4.2",
-		"@unocss/svelte-scoped": "^66.4.2",
+		"@unocss/vite": "^66.4.2",
 		"bits-ui": "^2.8.6",
 		"clsx": "^2.1.1",
 		"prettier": "^3.4.2",
@@ -39,6 +39,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@unocss/svelte-scoped": "^66.4.2",
 		"autoprefixer": "^10.4.21",
 		"mode-watcher": "^1.1.0",
 		"postcss": "^8.5.6",

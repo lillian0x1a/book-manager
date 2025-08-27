@@ -1,8 +1,11 @@
-import { defineConfig } from 'unocss';
-import presetUno from '@unocss/preset-uno';
-import presetAttributify from '@unocss/preset-attributify';
-import presetIcons from '@unocss/preset-icons';
+import { defineConfig, presetUno } from 'unocss';
 
 export default defineConfig({
-	presets: [presetUno(), presetAttributify(), presetIcons()]
+	presets: [presetUno()],
+	// その他の設定
+	theme: {
+		colors: {
+			primary: '#3b82f6'
+		}
+	}
 });
