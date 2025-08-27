@@ -9,80 +9,72 @@
 	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
 	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
 	import { onMount } from 'svelte';
-
 	$: statusColor = (status: Book['status']) =>
 		status === 'available' ? 'text-green-600' : 'text-red-600';
-
 	let selectedBook: Book | null = null;
 	let searchTerm = '';
 	let sortBy: 'title' | 'author' | 'publishedDate' = 'title';
 	let showEdit = false;
 	let showDetail = false;
 	let showSortDropdown = false;
-
 	// 並び替えオプション
 	const sortOptions = [
 		{ value: 'title', label: 'タイトル' },
 		{ value: 'author', label: '著者' },
 		{ value: 'publishedDate', label: '出版日' }
 	];
-
 	// 現在選択されている並び替えオプションのラベルを取得
 	$: selectedSortLabel = sortOptions.find((option) => option.value === sortBy)?.label || 'タイトル';
 
-	$: {
-		$books = $books.filter((book: Book) => {
-			const lowerSearchTerm = searchTerm.toLowerCase();
-			return (
-				book.title.toLowerCase().includes(lowerSearchTerm) ||
-				book.author.toLowerCase().includes(lowerSearchTerm) ||
-				(book.isbn && book.isbn.includes(lowerSearchTerm))
-			);
-		});
-		$books = [...$books].sort((a, b) => {
-			if (sortBy === 'publishedDate') {
-				return (a.publishedDate ?? '').localeCompare(b.publishedDate ?? '');
-			}
-			return (a[sortBy] ?? '').localeCompare(b[sortBy] ?? '');
-		});
-	}
+	// 表示用の書籍リストを計算（ストアを直接変更しない）
+	$: filteredBooks = $books.filter((book: Book) => {
+		if (!searchTerm) return true; // 検索語が空の場合は全て表示
+		const lowerSearchTerm = searchTerm.toLowerCase();
+		return (
+			book.title.toLowerCase().includes(lowerSearchTerm) ||
+			book.author.toLowerCase().includes(lowerSearchTerm) ||
+			(book.isbn && book.isbn.includes(lowerSearchTerm))
+		);
+	});
+
+	// ソートした書籍リストを計算
+	$: sortedBooks = [...filteredBooks].sort((a, b) => {
+		if (sortBy === 'publishedDate') {
+			return (a.publishedDate ?? '').localeCompare(b.publishedDate ?? '');
+		}
+		return (a[sortBy] ?? '').localeCompare(b[sortBy] ?? '');
+	});
 
 	function openModal(book: Book) {
 		selectedBook = { ...book };
 		showEdit = true;
 		showDetail = false;
 	}
-
 	function openDetail(book: Book) {
 		selectedBook = { ...book };
 		showDetail = true;
 		showEdit = false;
 	}
-
 	function closeModal() {
 		selectedBook = null;
 		showEdit = false;
 		showDetail = false;
 	}
-
 	function saveEdit() {
 		if (selectedBook) {
 			books.updateBook(selectedBook.id, selectedBook);
 			closeModal();
 		}
 	}
-
 	// ドロップダウンの選択処理
 	function selectSortOption(value: 'title' | 'author' | 'publishedDate') {
 		sortBy = value;
 		showSortDropdown = false;
 	}
-
 	// ドロップダウン外をクリックしたときに閉じる処理
 	function handleOutsideClick(event: MouseEvent) {
 		const dropdownButton = document.getElementById('sort-dropdown-button');
 		const dropdownMenu = document.getElementById('sort-dropdown-menu');
-
 		if (
 			dropdownButton &&
 			dropdownMenu &&
@@ -92,7 +84,6 @@
 			showSortDropdown = false;
 		}
 	}
-
 	// ドロップダウン表示時は外側クリックイベントを追加
 	$: if (showSortDropdown) {
 		// クライアントサイドでのみ実行されるようにチェック
@@ -160,13 +151,13 @@
 				</div>
 			</div>
 			<div class="text-sm text-gray-600 bg-white/30 backdrop-blur-sm px-3 py-1.5 rounded-lg">
-				{$books.length} 冊の書籍
+				{sortedBooks.length} 冊の書籍
 			</div>
 		</div>
 	</section>
 	<!-- 書籍一覧 -->
 	<section>
-		{#if $books.length === 0}
+		{#if sortedBooks.length === 0}
 			<div
 				class="text-center py-12 bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-lg"
 			>
@@ -176,7 +167,7 @@
 			</div>
 		{:else}
 			<div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-				{#each $books as book (book.id)}
+				{#each sortedBooks as book (book.id)}
 					<div
 						class="bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:bg-white/40 p-5"
 					>
@@ -241,7 +232,6 @@
 		{/if}
 	</section>
 </div>
-
 <!-- 編集モーダル -->
 {#if selectedBook && showEdit}
 	<div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -319,7 +309,6 @@
 		</div>
 	</div>
 {/if}
-
 <!-- 詳細モーダル -->
 {#if selectedBook && showDetail}
 	<div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
