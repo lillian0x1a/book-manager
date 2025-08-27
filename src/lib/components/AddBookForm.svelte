@@ -3,8 +3,6 @@
 	import { fetchBookByISBN } from '$lib/utils/bookApi';
 	import AddIcon from '$lib/components/icons/AddIcon.svelte';
 	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
-	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
-	import { onMount } from 'svelte';
 	import { ValidationError } from '$lib/types/errors';
 	import { isISBN } from '$lib/utils/validators';
 
@@ -13,7 +11,6 @@
 	let isbn: string = '';
 	let publishedDate: string = '';
 	let isLoading = false;
-	let showIsbnTooltip = false;
 	let errorMessage: string | null = null;
 
 	async function handleFetchByISBN() {
