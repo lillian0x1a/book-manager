@@ -4,41 +4,42 @@
 
 	export let notification: NotificationType;
 
-	$: notificationBgColor =
-		notification.type === 'info'
-			? 'bg-blue-500/80'
-			: notification.type === 'success'
-				? 'bg-green-500/80'
-				: 'bg-red-500/80';
+	// 通知タイプに応じた背景色とアイコンの色を設定
+	$: notificationConfig =
+		{
+			info: {
+				bgColor: 'bg-blue-500/90 dark:bg-blue-600/90',
+				borderColor: 'border-blue-400/30 dark:border-blue-500/30',
+				iconColor: 'text-blue-100'
+			},
+			success: {
+				bgColor: 'bg-green-500/90 dark:bg-green-600/90',
+				borderColor: 'border-green-400/30 dark:border-green-500/30',
+				iconColor: 'text-green-100'
+			},
+			error: {
+				bgColor: 'bg-red-500/90 dark:bg-red-600/90',
+				borderColor: 'border-red-400/30 dark:border-red-500/30',
+				iconColor: 'text-red-100'
+			}
+		}[notification.type] || notificationConfig.info;
 </script>
 
 {#if notification.show}
 	<div
-		class="fixed bottom-6 right-6 px-4 py-3 rounded-xl shadow-xl backdrop-blur-md transform transition-transform duration-300 animate-fade-in-up flex items-center text-white border border-white/30 {notificationBgColor}"
+		class="fixed bottom-6 right-6 px-5 py-4 rounded-2xl shadow-2xl backdrop-blur-lg transform transition-all duration-300 animate-fade-in-up flex items-center text-white {notificationConfig.bgColor} border {notificationConfig.borderColor}"
 	>
 		{#if notification.type === 'success'}
-			<CheckIcon class="mr-2" />
+			<CheckIcon class="mr-3 w-5 h-5 {notificationConfig.iconColor}" />
 		{:else if notification.type === 'error'}
-			<CloseIcon class="mr-2" />
+			<CloseIcon class="mr-3 w-5 h-5 {notificationConfig.iconColor}" />
 		{:else}
-			<InfoIcon class="mr-2" />
+			<InfoIcon class="mr-3 w-5 h-5 {notificationConfig.iconColor}" />
 		{/if}
-		<span>{notification.message}</span>
+		<span class="font-medium">{notification.message}</span>
 	</div>
 {/if}
 
-<style>
-	@keyframes fadeInUp {
-		from {
-			opacity: 0;
-			transform: translateY(20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-	.animate-fade-in-up {
-		animation: fadeInUp 0.3s ease-out forwards;
-	}
+<style global>
+	/* UnoCSSのアニメーションプリセットを使用するため、カスタムアニメーションは不要 */
 </style>

@@ -1,11 +1,22 @@
-import { defineConfig, presetUno } from 'unocss';
+import { defineConfig, presetAttributify, presetUno } from 'unocss';
 
 export default defineConfig({
-	presets: [presetUno()],
-	// その他の設定
+	presets: [
+		presetAttributify(), // 属性ベースのユーティリティを有効化
+		presetUno() // デフォルトのユーティリティを有効化
+	],
 	theme: {
-		colors: {
-			primary: '#3b82f6'
+		extend: {
+			fontFamily: {
+				apple: [
+					'-apple-system',
+					'SF Pro Text',
+					'Helvetica Neue',
+					'Helvetica',
+					'Arial',
+					'sans-serif'
+				]
+			}
 		}
 	}
 });

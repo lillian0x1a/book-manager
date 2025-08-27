@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { activeTab, type TabId } from '$lib/stores/navigation';
-
 	import BookIcon from '$lib/components/icons/BookIcon.svelte';
 	import SettingsIcon from '$lib/components/icons/SettingsIcon.svelte';
 	import AddIcon from '$lib/components/icons/AddIcon.svelte';
@@ -18,84 +17,25 @@
 	];
 </script>
 
-<nav class="mobile-tab-bar">
+<nav
+	class="fixed bottom-0 left-0 right-0 bg-white/30 dark:bg-gray-800/30 backdrop-blur-xl -webkit-backdrop-blur-xl border-t border-white/20 dark:border-gray-700/20 flex justify-around items-center px-4 py-2 shadow-lg z-50"
+>
 	{#each tabs as tab}
 		<button
-			class="tab-button {$activeTab === tab.id ? 'active' : ''}"
+			class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl transition-all duration-200 bg-none border-none cursor-pointer text-gray-600 dark:text-gray-400 hover:bg-white/20 dark:hover:bg-gray-700/20 relative {$activeTab ===
+			tab.id
+				? 'bg-white/40 dark:bg-gray-700/40 text-indigo-600 dark:text-indigo-400 shadow-sm'
+				: ''}"
 			on:click={() => ($activeTab = tab.id)}
 		>
-			<svelte:component this={tab.icon} class="tab-icon" />
-			<span class="tab-label">{tab.label}</span>
+			<svelte:component this={tab.icon} class="w-6 h-6" />
+			<span class="text-xs mt-1">{tab.label}</span>
+
+			{#if $activeTab === tab.id}
+				<div
+					class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-1 h-1 rounded-full bg-current opacity-100"
+				></div>
+			{/if}
 		</button>
 	{/each}
 </nav>
-
-<style>
-	.mobile-tab-bar {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		right: 0;
-		background-color: rgba(255, 255, 255, 0.3);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-		border-top: 1px solid rgba(255, 255, 255, 0.2);
-		display: flex;
-		justify-content: space-around;
-		align-items: center;
-		padding: 0.5rem 1rem;
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -2px rgba(0, 0, 0, 0.05);
-	}
-
-	.tab-button {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		width: 4rem;
-		height: 4rem;
-		border-radius: 1rem;
-		transition: all 0.3s ease;
-		background: none;
-		border: none;
-		cursor: pointer;
-		color: #374151;
-		position: relative;
-	}
-
-	.tab-button:hover {
-		background-color: rgba(255, 255, 255, 0.2);
-	}
-
-	.tab-button.active {
-		background-color: rgba(255, 255, 255, 0.4);
-		color: #4f46e5;
-		box-shadow:
-			0 4px 6px -1px rgba(0, 0, 0, 0.1),
-			0 2px 4px -1px rgba(0, 0, 0, 0.06);
-	}
-
-	.tab-button.active::after {
-		content: '';
-		position: absolute;
-		bottom: 0.5rem;
-		left: 50%;
-		transform: translateX(-50%);
-		width: 0.25rem;
-		height: 0.25rem;
-		border-radius: 50%;
-		background-color: currentColor;
-		opacity: 1;
-	}
-
-	.tab-icon {
-		font-size: 1.5rem;
-	}
-
-	.tab-label {
-		font-size: 0.75rem;
-		margin-top: 0.25rem;
-	}
-</style>

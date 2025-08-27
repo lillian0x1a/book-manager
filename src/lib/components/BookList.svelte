@@ -51,20 +51,20 @@
 </script>
 
 <div
-	class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 px-4 py-8 max-w-7xl mx-auto"
+	class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 px-4 py-8 max-w-7xl mx-auto"
 >
 	<!-- 検索とフィルターセクション -->
 	<BookSearch />
 
 	<!-- 書籍数表示 -->
-	<div class="mb-4 text-right">
+	<div class="mb-6 text-right">
 		<div
-			class="text-sm text-gray-600 bg-white/30 backdrop-blur-sm px-3 py-1.5 rounded-lg inline-block"
+			class="text-sm text-gray-700 dark:text-gray-300 bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm px-4 py-2 rounded-xl inline-block shadow-sm"
 		>
 			{#if $books.length}
-				{$books.length} 冊の書籍
+				<span class="font-medium">{$books.length}</span> 冊の書籍
 			{:else}
-				0 冊の書籍
+				<span class="font-medium">0</span> 冊の書籍
 			{/if}
 		</div>
 	</div>
@@ -73,11 +73,15 @@
 	<section>
 		{#if sortedBooks.length === 0}
 			<div
-				class="text-center py-12 bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-lg"
+				class="text-center py-16 bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-lg"
 			>
-				<BookIcon class="mx-auto text-gray-400 mb-4" />
-				<h3 class="text-lg font-medium text-gray-800 mb-1">書籍が見つかりません</h3>
-				<p class="text-gray-600">検索条件を変更するか、新しい書籍を追加してください</p>
+				<BookIcon class="mx-auto text-gray-400 dark:text-gray-500 mb-5 w-16 h-16" />
+				<h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-2">
+					書籍が見つかりません
+				</h3>
+				<p class="text-gray-600 dark:text-gray-400 max-w-md mx-auto">
+					検索条件を変更するか、新しい書籍を追加してください
+				</p>
 			</div>
 		{:else}
 			<div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

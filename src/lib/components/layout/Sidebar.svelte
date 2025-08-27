@@ -1,7 +1,6 @@
 <!-- components/layout/Sidebar.svelte -->
 <script lang="ts">
 	import { activeTab, type TabId } from '$lib/stores/navigation';
-
 	import BookIcon from '$lib/components/icons/BookIcon.svelte';
 	import SettingsIcon from '$lib/components/icons/SettingsIcon.svelte';
 	import AddIcon from '$lib/components/icons/AddIcon.svelte';
@@ -19,92 +18,29 @@
 	];
 </script>
 
-<nav class="sidebar">
-	<div class="sidebar-header">
-		<h2>読書管理</h2>
+<nav
+	class="w-64 bg-white/30 dark:bg-gray-800/30 backdrop-blur-xl -webkit-backdrop-blur-xl border-r border-white/20 dark:border-gray-700/20 flex-shrink-0 flex flex-col shadow-lg z-10"
+>
+	<div class="p-6 border-b border-white/20 dark:border-gray-700/20">
+		<h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">読書管理</h2>
 	</div>
-	<div class="sidebar-content">
-		<ul class="nav-list">
+
+	<div class="flex-1 p-4">
+		<ul class="list-none p-0 m-0 flex flex-col gap-2">
 			{#each tabs as tab}
 				<li>
 					<button
-						class="nav-button {$activeTab === tab.id ? 'active' : ''}"
+						class="w-full text-left px-4 py-3 rounded-xl flex items-center gap-3 transition-all duration-200 bg-none border-none cursor-pointer text-gray-700 dark:text-gray-300 hover:bg-white/20 dark:hover:bg-gray-700/20 {$activeTab ===
+						tab.id
+							? 'bg-white/30 dark:bg-gray-700/30 text-indigo-600 dark:text-indigo-400 shadow-sm'
+							: ''}"
 						on:click={() => ($activeTab = tab.id)}
 					>
-						<svelte:component this={tab.icon} />
-						<span>{tab.label}</span>
+						<svelte:component this={tab.icon} class="w-5 h-5" />
+						<span class="font-medium">{tab.label}</span>
 					</button>
 				</li>
 			{/each}
 		</ul>
 	</div>
 </nav>
-
-<style>
-	.sidebar {
-		width: 16rem;
-		background-color: rgba(255, 255, 255, 0.3);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-		border-right: 1px solid rgba(255, 255, 255, 0.2);
-		flex-shrink: 0;
-		display: flex;
-		flex-direction: column;
-		box-shadow:
-			0 10px 15px -3px rgba(0, 0, 0, 0.1),
-			0 4px 6px -2px rgba(0, 0, 0, 0.05);
-		z-index: 10;
-	}
-
-	.sidebar-header {
-		padding: 1.5rem;
-		border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-	}
-
-	.sidebar-header h2 {
-		font-size: 1.5rem;
-		font-weight: 600;
-		color: #1f2937;
-	}
-
-	.sidebar-content {
-		flex: 1;
-		padding: 1rem;
-	}
-
-	.nav-list {
-		list-style: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: column;
-		gap: 0.25rem;
-	}
-
-	.nav-button {
-		width: 100%;
-		text-align: left;
-		padding: 0.75rem 1rem;
-		border-radius: 0.75rem;
-		display: flex;
-		align-items: center;
-		gap: 0.75rem;
-		transition: all 0.3s ease;
-		background: none;
-		border: none;
-		cursor: pointer;
-		color: #374151;
-	}
-
-	.nav-button:hover {
-		background-color: rgba(255, 255, 255, 0.2);
-	}
-
-	.nav-button.active {
-		background-color: rgba(255, 255, 255, 0.4);
-		color: #4f46e5;
-		box-shadow:
-			0 4px 6px -1px rgba(0, 0, 0, 0.1),
-			0 2px 4px -1px rgba(0, 0, 0, 0.06);
-	}
-</style>

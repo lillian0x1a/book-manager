@@ -1,4 +1,3 @@
-<!-- src/lib/components/BackupRestore.svelte -->
 <script lang="ts">
 	import { books } from '$lib/stores/books';
 	import { SpinnerIcon, DownloadIcon, UploadIcon, FileIcon } from '$lib/components/icons';
@@ -23,26 +22,14 @@
 	// コンポーネントがマウントされたときにスクロールを無効化
 	onMount(() => {
 		// bodyのスクロールを無効化
-		document.body.style.overflow = 'hidden';
-		document.body.style.position = 'fixed';
-		document.body.style.width = '100%';
-		document.body.style.height = '100%';
+		document.body.classList.add('overflow-hidden', 'fixed', 'w-full', 'h-full');
 		// htmlのスクロールを無効化
-		document.documentElement.style.overflow = 'hidden';
-		document.documentElement.style.position = 'fixed';
-		document.documentElement.style.width = '100%';
-		document.documentElement.style.height = '100%';
+		document.documentElement.classList.add('overflow-hidden', 'fixed', 'w-full', 'h-full');
 
 		// クリーンアップ関数
 		return () => {
-			document.body.style.overflow = '';
-			document.body.style.position = '';
-			document.body.style.width = '';
-			document.body.style.height = '';
-			document.documentElement.style.overflow = '';
-			document.documentElement.style.position = '';
-			document.documentElement.style.width = '';
-			document.documentElement.style.height = '';
+			document.body.classList.remove('overflow-hidden', 'fixed', 'w-full', 'h-full');
+			document.documentElement.classList.remove('overflow-hidden', 'fixed', 'w-full', 'h-full');
 		};
 	});
 
@@ -71,35 +58,30 @@
 
 	async function importData(): Promise<void> {
 		if (!selectedFile) return;
-
 		isImporting = true;
+
 		// ファイル読み込み
 		const reader = new FileReader();
-
 		reader.onload = (e) => {
 			try {
 				const result = e.target?.result as string;
 				if (!result) {
 					throw new AppError('ファイルの読み込みに失敗しました');
 				}
-
 				const data = JSON.parse(result);
 				// バリデーション
 				const validatedBooks = validateBookData(data);
-
 				// 確認モーダルを表示
 				importedData = validatedBooks;
 				showConfirmModal = true;
 			} catch (error) {
 				console.error('Import error:', error);
 				let errorMessage = 'JSONの解析に失敗しました。ファイルを確認してください。';
-
 				if (error instanceof ValidationError) {
 					errorMessage = error.message;
 				} else if (error instanceof AppError) {
 					errorMessage = error.message;
 				}
-
 				showNotification(errorMessage, 'error');
 			} finally {
 				isImporting = false;
@@ -142,7 +124,6 @@
 			message,
 			type
 		};
-
 		// 3秒後に通知を非表示
 		setTimeout(() => {
 			notification.show = false;
@@ -156,7 +137,6 @@
 	}
 </script>
 
-<!-- 以下は同じ -->
 <svelte:head>
 	<style>
 		html,
@@ -176,20 +156,22 @@
 </svelte:head>
 
 <div
-	class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-4 md:p-8 flex items-center justify-center fixed inset-0 overflow-hidden"
+	class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-4 md:p-8 flex items-center justify-center fixed inset-0 overflow-hidden"
 >
 	<div
-		class="bg-white/30 backdrop-blur-lg rounded-2xl border border-white/20 shadow-xl p-6 max-w-md w-full space-y-5 overflow-y-auto max-h-[calc(100vh-4rem)]"
+		class="bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-2xl border border-white/30 dark:border-gray-700/30 shadow-2xl p-6 max-w-md w-full space-y-6 overflow-y-auto max-h-[calc(100vh-4rem)]"
 	>
-		<div class="bg-blue-100/30 backdrop-blur-sm rounded-xl p-5 border border-blue-200/30 shadow-md">
-			<h3 class="text-lg font-medium text-blue-800 mb-3">バックアップ</h3>
-			<p class="text-sm text-blue-700 mb-4">
+		<div
+			class="bg-blue-100/50 dark:bg-blue-900/30 backdrop-blur-sm rounded-2xl p-6 border border-blue-200/50 dark:border-blue-700/30 shadow-md"
+		>
+			<h3 class="text-xl font-semibold text-blue-800 dark:text-blue-200 mb-4">バックアップ</h3>
+			<p class="text-sm text-blue-700 dark:text-blue-300 mb-5">
 				現在の書籍データをJSONファイルとしてエクスポートします
 			</p>
 			<button
 				on:click={exportData}
 				disabled={isExporting}
-				class="w-full py-3 px-4 rounded-xl bg-blue-500/80 backdrop-blur-sm text-white font-medium hover:bg-blue-600/80 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 transition-all disabled:opacity-50 flex items-center justify-center"
+				class="w-full py-3.5 px-4 rounded-2xl bg-blue-500/90 dark:bg-blue-600/90 backdrop-blur-sm text-white font-medium hover:bg-blue-600/90 dark:hover:bg-blue-700/90 focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 flex items-center justify-center shadow-lg hover:shadow-xl"
 			>
 				{#if isExporting}
 					<SpinnerIcon class="mr-2 text-white" />
@@ -202,10 +184,13 @@
 		</div>
 
 		<div
-			class="bg-green-100/30 backdrop-blur-sm rounded-xl p-5 border border-green-200/30 shadow-md"
+			class="bg-green-100/50 dark:bg-green-900/30 backdrop-blur-sm rounded-2xl p-6 border border-green-200/50 dark:border-green-700/30 shadow-md"
 		>
-			<h3 class="text-lg font-medium text-green-800 mb-3">復元</h3>
-			<p class="text-sm text-green-700 mb-4">JSONファイルから書籍データをインポートします</p>
+			<h3 class="text-xl font-semibold text-green-800 dark:text-green-200 mb-4">復元</h3>
+			<p class="text-sm text-green-700 dark:text-green-300 mb-5">
+				JSONファイルから書籍データをインポートします
+			</p>
+
 			<input
 				type="file"
 				accept=".json"
@@ -214,9 +199,10 @@
 				id="import-file"
 				disabled={isImporting}
 			/>
+
 			<label
 				for="import-file"
-				class="w-full py-3 px-4 rounded-xl bg-green-500/80 backdrop-blur-sm text-white font-medium hover:bg-green-600/80 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:ring-offset-2 transition-all disabled:opacity-50 flex items-center justify-center cursor-pointer"
+				class="w-full py-3.5 px-4 rounded-2xl bg-green-500/90 dark:bg-green-600/90 backdrop-blur-sm text-white font-medium hover:bg-green-600/90 dark:hover:bg-green-700/90 focus:outline-none focus:ring-2 focus:ring-green-400/50 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 flex items-center justify-center cursor-pointer shadow-lg hover:shadow-xl"
 			>
 				{#if isImporting}
 					<SpinnerIcon class="mr-2 text-white" />
@@ -229,9 +215,9 @@
 
 			{#if selectedFile && !isImporting}
 				<div
-					class="mt-3 text-sm text-green-700 flex items-center bg-green-100/30 backdrop-blur-sm rounded-lg p-2 border border-green-200/30"
+					class="mt-4 text-sm text-green-700 dark:text-green-300 flex items-center bg-green-100/50 dark:bg-green-900/30 backdrop-blur-sm rounded-xl p-3 border border-green-200/50 dark:border-green-700/30"
 				>
-					<FileIcon class="mr-1.5" />
+					<FileIcon class="mr-2" />
 					{selectedFile.name}
 				</div>
 			{/if}
