@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { selectedBook, showDetailModal } from '$lib/stores/bookUI';
-	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
-	import BookIcon from '$lib/components/icons/BookIcon.svelte';
+	import { BookIcon, CloseIcon } from '$lib/components/icons';
 
 	function closeModal() {
 		showDetailModal.set(false);

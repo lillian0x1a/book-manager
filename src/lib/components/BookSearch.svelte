@@ -6,8 +6,7 @@
 		selectedSortLabel,
 		sortOptions
 	} from '$lib/stores/bookUI';
-	import SearchIcon from '$lib/components/icons/SearchIcon.svelte';
-	import DropdownIcon from '$lib/components/icons/DropdownIcon.svelte';
+	import { DropdownIcon, SearchIcon } from '$lib/components/icons';
 
 	// ドロップダウンの選択処理
 	function selectSortOption(value: 'title' | 'author' | 'publishedDate') {

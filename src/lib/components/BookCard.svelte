@@ -1,9 +1,6 @@
 <script lang="ts">
 	import type { Book } from '$lib/types/book';
-	import BookIcon from '$lib/components/icons/BookIcon.svelte';
-	import InfoIcon from '$lib/components/icons/InfoIcon.svelte';
-	import EditIcon from '$lib/components/icons/EditIcon.svelte';
-	import DeleteIcon from '$lib/components/icons/DeleteIcon.svelte';
+	import { BookIcon, InfoIcon, EditIcon, DeleteIcon } from '$lib/components/icons';
 
 	export let book: Book;
 	export let onDetail: (book: Book) => void;

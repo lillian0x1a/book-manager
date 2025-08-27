@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { books } from '$lib/stores/books';
 	import { selectedBook, showEditModal } from '$lib/stores/bookUI';
-	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
+	import { CloseIcon } from '$lib/components/icons';
 
 	function closeModal() {
 		showEditModal.set(false);

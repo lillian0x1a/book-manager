@@ -12,7 +12,7 @@
 	import BookCard from './BookCard.svelte';
 	import BookEditModal from './BookEditModal.svelte';
 	import BookDetailModal from './BookDetailModal.svelte';
-	import BookIcon from '$lib/components/icons/BookIcon.svelte';
+	import { BookIcon } from '$lib/components/icons';
 
 	// 表示用の書籍リストを計算（ストアを直接変更しない）
 	$: filteredBooks = $books.filter((book: Book) => {

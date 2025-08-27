@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { books } from '$lib/stores/books';
 	import { fetchBookByISBN } from '$lib/utils/bookApi';
-	import AddIcon from '$lib/components/icons/AddIcon.svelte';
-	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
+	import { AddIcon, SpinnerIcon } from '$lib/components/icons';
 	import { ValidationError } from '$lib/types/errors';
 	import { isISBN } from '$lib/utils/validators';
 
