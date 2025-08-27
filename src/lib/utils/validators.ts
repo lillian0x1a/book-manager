@@ -1,4 +1,3 @@
-// src/lib/utils/validators.ts
 import { ValidationError } from '../types/errors';
 
 export function isEmail(value: string): boolean {

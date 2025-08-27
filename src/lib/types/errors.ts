@@ -1,6 +1,3 @@
-/**
- * Error type definitions used across the app
- */
 export class AppError extends Error {
 	readonly status: number;
 	readonly code: string;
@@ -15,7 +12,6 @@ export class AppError extends Error {
 export class ValidationError extends Error {
 	status: number;
 	code: string;
-
 	constructor(message: string, code: string, status = 400) {
 		super(message);
 		this.name = 'ValidationError';

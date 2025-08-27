@@ -1,20 +1,24 @@
+<!-- src/lib/components/BackupRestore.svelte -->
 <script lang="ts">
 	import { books } from '$lib/stores/books';
-	// SVGアイコンコンポーネントをインポート
-	import SpinnerIcon from '$lib/components/icons/SpinnerIcon.svelte';
-	import DownloadIcon from '$lib/components/icons/DownloadIcon.svelte';
-	import UploadIcon from '$lib/components/icons/UploadIcon.svelte';
-	import FileIcon from '$lib/components/icons/FileIcon.svelte';
-	import CheckIcon from '$lib/components/icons/CheckIcon.svelte';
-	import CloseIcon from '$lib/components/icons/CloseIcon.svelte';
-	import InfoIcon from '$lib/components/icons/InfoIcon.svelte';
+	import { SpinnerIcon, DownloadIcon, UploadIcon, FileIcon } from '$lib/components/icons';
 	import { onMount } from 'svelte';
+	import Notification from './Notification.svelte';
+	import ConfirmModal from './ConfirmModal.svelte';
+	import type { Book, Notification as NotificationType } from '$lib/types/book';
+	import { AppError, ValidationError, NetworkError } from '$lib/types/errors';
+	import { validateBookData } from '$lib/utils/validation';
 
 	let selectedFile: File | null = null;
 	let isExporting = false;
 	let isImporting = false;
 	let showConfirmModal = false;
-	let importedData: any[] | null = null;
+	let importedData: Book[] | null = null;
+	let notification: NotificationType = {
+		show: false,
+		message: '',
+		type: 'info'
+	};
 
 	// コンポーネントがマウントされたときにスクロールを無効化
 	onMount(() => {
@@ -28,6 +32,7 @@
 		document.documentElement.style.position = 'fixed';
 		document.documentElement.style.width = '100%';
 		document.documentElement.style.height = '100%';
+
 		// クリーンアップ関数
 		return () => {
 			document.body.style.overflow = '';
@@ -41,7 +46,7 @@
 		};
 	});
 
-	function exportData() {
+	function exportData(): void {
 		isExporting = true;
 		try {
 			const data = $books;
@@ -55,79 +60,103 @@
 			// エクスポート成功フィードバック
 			showNotification('バックアップが正常に作成されました', 'success');
 		} catch (error) {
-			showNotification('バックアップの作成に失敗しました', 'error');
+			console.error('Export error:', error);
+			const errorMessage =
+				error instanceof AppError ? error.message : 'バックアップの作成に失敗しました';
+			showNotification(errorMessage, 'error');
 		} finally {
 			isExporting = false;
 		}
 	}
 
-	async function importData() {
+	async function importData(): Promise<void> {
 		if (!selectedFile) return;
+
 		isImporting = true;
 		// ファイル読み込み
 		const reader = new FileReader();
+
 		reader.onload = (e) => {
 			try {
-				const data = JSON.parse(e.target?.result as string);
-				// バリデーション
-				if (!Array.isArray(data) || !data.every((b: any) => b.id && b.title && b.author)) {
-					showNotification('無効なデータ形式です。Book型のJSONをインポートしてください。', 'error');
-					return;
+				const result = e.target?.result as string;
+				if (!result) {
+					throw new AppError('ファイルの読み込みに失敗しました');
 				}
+
+				const data = JSON.parse(result);
+				// バリデーション
+				const validatedBooks = validateBookData(data);
+
 				// 確認モーダルを表示
-				importedData = data;
+				importedData = validatedBooks;
 				showConfirmModal = true;
 			} catch (error) {
-				showNotification('JSONの解析に失敗しました。ファイルを確認してください。', 'error');
+				console.error('Import error:', error);
+				let errorMessage = 'JSONの解析に失敗しました。ファイルを確認してください。';
+
+				if (error instanceof ValidationError) {
+					errorMessage = error.message;
+				} else if (error instanceof AppError) {
+					errorMessage = error.message;
+				}
+
+				showNotification(errorMessage, 'error');
 			} finally {
 				isImporting = false;
 			}
 		};
+
+		reader.onerror = () => {
+			showNotification('ファイルの読み込み中にエラーが発生しました', 'error');
+			isImporting = false;
+		};
+
 		reader.readAsText(selectedFile);
 	}
 
-	function confirmImport() {
+	function confirmImport(): void {
 		if (importedData) {
-			books.importBooks(importedData);
-			showNotification('インポートが成功しました！', 'success');
-			selectedFile = null;
-			importedData = null;
-			showConfirmModal = false;
+			try {
+				books.importBooks(importedData);
+				showNotification('インポートが成功しました！', 'success');
+				selectedFile = null;
+				importedData = null;
+				showConfirmModal = false;
+			} catch (error) {
+				console.error('Import confirmation error:', error);
+				const errorMessage =
+					error instanceof AppError ? error.message : 'インポート中にエラーが発生しました';
+				showNotification(errorMessage, 'error');
+			}
 		}
 	}
 
-	function cancelImport() {
+	function cancelImport(): void {
 		importedData = null;
 		showConfirmModal = false;
 	}
 
-	let notification = {
-		show: false,
-		message: '',
-		type: 'info' // 'info', 'success', 'error'
-	};
-
-	function showNotification(message: string, type: 'info' | 'success' | 'error') {
+	function showNotification(message: string, type: 'info' | 'success' | 'error'): void {
 		notification = {
 			show: true,
 			message,
 			type
 		};
+
 		// 3秒後に通知を非表示
 		setTimeout(() => {
 			notification.show = false;
 		}, 3000);
 	}
 
-	// 通知の背景色を計算
-	$: notificationBgColor =
-		notification.type === 'info'
-			? 'bg-blue-500/80'
-			: notification.type === 'success'
-				? 'bg-green-500/80'
-				: 'bg-red-500/80';
+	function handleFileChange(e: Event): void {
+		const target = e.target as HTMLInputElement | null;
+		selectedFile = target?.files?.[0] || null;
+		if (selectedFile) importData();
+	}
 </script>
 
+<!-- 以下は同じ -->
 <svelte:head>
 	<style>
 		html,
@@ -171,6 +200,7 @@
 				{/if}
 			</button>
 		</div>
+
 		<div
 			class="bg-green-100/30 backdrop-blur-sm rounded-xl p-5 border border-green-200/30 shadow-md"
 		>
@@ -179,11 +209,7 @@
 			<input
 				type="file"
 				accept=".json"
-				on:change={(e) => {
-					const target = e.target as HTMLInputElement | null;
-					selectedFile = target?.files?.[0] || null;
-					if (selectedFile) importData();
-				}}
+				on:change={handleFileChange}
 				class="hidden"
 				id="import-file"
 				disabled={isImporting}
@@ -200,6 +226,7 @@
 					ファイルを選択してインポート
 				{/if}
 			</label>
+
 			{#if selectedFile && !isImporting}
 				<div
 					class="mt-3 text-sm text-green-700 flex items-center bg-green-100/30 backdrop-blur-sm rounded-lg p-2 border border-green-200/30"
@@ -213,85 +240,13 @@
 </div>
 
 <!-- 確認モーダル -->
-{#if showConfirmModal}
-	<div class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-		<div
-			class="bg-white/40 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl w-full max-w-md transform transition-all p-6"
-		>
-			<div class="flex justify-between items-center mb-5">
-				<h2 class="text-xl font-semibold text-gray-800 flex items-center">
-					<InfoIcon class="text-yellow-500 mr-2" />
-					データの上書き確認
-				</h2>
-				<button
-					on:click={cancelImport}
-					class="text-gray-500 hover:text-gray-700 p-1 rounded-lg hover:bg-white/30 backdrop-blur-sm transition"
-				>
-					<CloseIcon />
-				</button>
-			</div>
-			<div class="space-y-4">
-				<div class="bg-yellow-100/30 backdrop-blur-sm rounded-xl p-4 border border-yellow-200/30">
-					<p class="text-yellow-800">
-						既存の書籍データをインポートしたデータで上書きしようとしています。この操作は元に戻せません。
-					</p>
-				</div>
-				<div class="text-gray-700">
-					<p class="font-medium mb-2">インポート内容:</p>
-					<ul class="list-disc pl-5 space-y-1 text-sm">
-						<li>書籍数: {importedData?.length || 0} 冊</li>
-						<li>ファイル名: {selectedFile?.name || '不明'}</li>
-					</ul>
-				</div>
-			</div>
-			<div class="flex justify-end space-x-3 mt-8 pt-4 border-t border-white/30">
-				<button
-					type="button"
-					class="px-4 py-2 bg-white/30 backdrop-blur-sm text-gray-800 font-medium rounded-xl hover:bg-white/40 transition"
-					on:click={cancelImport}
-				>
-					キャンセル
-				</button>
-				<button
-					type="button"
-					class="px-4 py-2 bg-red-500/80 backdrop-blur-sm text-white font-medium rounded-xl hover:bg-red-600/80 transition"
-					on:click={confirmImport}
-				>
-					上書きする
-				</button>
-			</div>
-		</div>
-	</div>
-{/if}
+<ConfirmModal
+	show={showConfirmModal}
+	onConfirm={confirmImport}
+	onCancel={cancelImport}
+	{importedData}
+	fileName={selectedFile?.name || null}
+/>
 
 <!-- 通知コンポーネント -->
-{#if notification.show}
-	<div
-		class="fixed bottom-6 right-6 px-4 py-3 rounded-xl shadow-xl backdrop-blur-md transform transition-transform duration-300 animate-fade-in-up flex items-center text-white border border-white/30 {notificationBgColor}"
-	>
-		{#if notification.type === 'success'}
-			<CheckIcon class="mr-2" />
-		{:else if notification.type === 'error'}
-			<CloseIcon class="mr-2" />
-		{:else}
-			<InfoIcon class="mr-2" />
-		{/if}
-		<span>{notification.message}</span>
-	</div>
-{/if}
-
-<style>
-	@keyframes fadeInUp {
-		from {
-			opacity: 0;
-			transform: translateY(20px);
-		}
-		to {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-	.animate-fade-in-up {
-		animation: fadeInUp 0.3s ease-out forwards;
-	}
-</style>
+<Notification {notification} />
