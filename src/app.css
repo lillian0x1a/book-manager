@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 
 @import 'tw-animate-css';
+/* UnoCSSのスタイルをインポート */
+@unocss all;
 
 @theme inline {
 	--radius-sm: calc(var(--radius) - 4px);
